@@ -1,6 +1,6 @@
 package de.dhbw.erpbackend.web;
 
-import de.dhbw.erpbackend.service.UserService;
+import de.dhbw.erpbackend.repository.UserRepository;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class RootServlet extends HttpServlet {
 
     @Inject
-    UserService userService;
+    UserRepository userRepository;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -23,7 +23,7 @@ public class RootServlet extends HttpServlet {
             resp.sendRedirect(ctx + "/overview");
             return;
         }
-        if (!userService.anyUserExists()) {
+        if (userRepository.count() == 0) {
             resp.sendRedirect(ctx + "/onboarding");
             return;
         }

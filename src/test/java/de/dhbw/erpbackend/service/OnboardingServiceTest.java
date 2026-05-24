@@ -1,71 +1,69 @@
 package de.dhbw.erpbackend.service;
 
 import de.dhbw.erpbackend.domain.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import de.dhbw.erpbackend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+/**
+ * Unit test for OnboardingService with a mocked repository. JTA + the real
+ * Jakarta Data repo implementation are exercised at runtime in the deployed
+ * app; here we only verify validation, hashing, and the registration flow.
+ */
+@ExtendWith(MockitoExtension.class)
 class OnboardingServiceTest {
 
-    private EntityManagerFactory emf;
-    private EntityManager em;
-    private OnboardingService service;
+    @Mock
+    UserRepository userRepository;
 
-    @BeforeAll
-    void setupFactory() {
-        Map<String, String> overrides = new HashMap<>();
-        overrides.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:erp-onboarding;DB_CLOSE_DELAY=-1");
-        overrides.put("hibernate.hbm2ddl.auto", "create-drop");
-        emf = Persistence.createEntityManagerFactory("default", overrides);
-    }
-
-    @AfterAll
-    void closeFactory() {
-        if (emf != null) emf.close();
-    }
+    OnboardingService service;
 
     @BeforeEach
-    void freshEm() {
-        if (em != null && em.isOpen()) em.close();
-        em = emf.createEntityManager();
-        em.getTransaction().begin();
-        em.createQuery("delete from User").executeUpdate();
-        em.getTransaction().commit();
-
+    void setUp() {
         service = new OnboardingService();
-        service.em = em;
+        service.userRepository = userRepository;
         service.passwordService = new PasswordService();
-        service.userService = new UserService();
-        service.userService.em = em;
+    }
+
+    private void stubInsertAssignsId() {
+        when(userRepository.insert(any(User.class))).thenAnswer((InvocationOnMock inv) -> {
+            User u = inv.getArgument(0);
+            u.setId(1L);
+            return u;
+        });
     }
 
     @Test
     void registersUserHashesPasswordAndPersists() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        stubInsertAssignsId();
+
         User u = service.register("alice", "hunter2", "hunter2");
+
         assertNotNull(u.getId());
         assertEquals("alice", u.getUsername());
         assertTrue(u.getPasswordHash().startsWith("$2"));
-
-        User loaded = em.find(User.class, u.getId());
-        assertEquals("alice", loaded.getUsername());
     }
 
     @Test
     void trimsUsername() {
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        stubInsertAssignsId();
+
         User u = service.register("  bob  ", "p4ssword", "p4ssword");
         assertEquals("bob", u.getUsername());
     }
@@ -98,8 +96,12 @@ class OnboardingServiceTest {
 
     @Test
     void rejectsDuplicateUsername() {
-        service.register("carol", "secret", "secret");
-        assertThrows(UserFacingException.class,
+        User existing = new User();
+        existing.setUsername("carol");
+        when(userRepository.findByUsername("carol")).thenReturn(Optional.of(existing));
+
+        UserFacingException ex = assertThrows(UserFacingException.class,
                 () -> service.register("carol", "secret", "secret"));
+        assertTrue(ex.getMessage().toLowerCase().contains("vergeben"));
     }
 }

@@ -1,10 +1,9 @@
 package de.dhbw.erpbackend.devserver;
 
-import org.apache.catalina.startup.Tomcat;
+import org.apache.tomee.embedded.Configuration;
+import org.apache.tomee.embedded.Container;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class DevServer {
 
@@ -19,17 +18,28 @@ public class DevServer {
             throw new IllegalStateException("war file not found: " + war.getAbsolutePath());
         }
 
-        Path baseDir = Files.createTempDirectory("erp-backend-tomcat-");
-        Files.createDirectories(baseDir.resolve("webapps"));
+        Configuration cfg = new Configuration()
+                .http(port)
+                .property("erpDataSource", "new://Resource?type=DataSource")
+                .property("erpDataSource.JdbcDriver", "org.h2.Driver")
+                .property("erpDataSource.JdbcUrl", "jdbc:h2:file:./data/erp;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1")
+                .property("erpDataSource.UserName", "sa")
+                .property("erpDataSource.Password", "")
+                .property("erpDataSource.JtaManaged", "true");
 
-        Tomcat tomcat = new Tomcat();
-        tomcat.setPort(port);
-        tomcat.setBaseDir(baseDir.toString());
-        tomcat.getConnector();
-        tomcat.addWebapp("", war.getAbsolutePath());
+        Container container = new Container();
+        container.setup(cfg);
+        container.start();
+        container.deploy("", war, true);
 
-        tomcat.start();
         System.out.println("ERP backend running at http://localhost:" + port + "/");
-        tomcat.getServer().await();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                container.stop();
+            } catch (Exception ignored) {
+            }
+        }));
+        container.await();
     }
 }

@@ -7,9 +7,12 @@
 
     <display-name>erp-backend</display-name>
 
-    <listener>
-        <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
-    </listener>
+    <jsp-config>
+        <taglib>
+            <taglib-uri>jakarta.tags.core</taglib-uri>
+            <taglib-location>/WEB-INF/tlds/c.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>

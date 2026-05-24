@@ -1,10 +1,10 @@
 package de.dhbw.erpbackend.service;
 
 import de.dhbw.erpbackend.domain.User;
+import de.dhbw.erpbackend.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import jakarta.transaction.Transactional;
 
 import java.util.Objects;
 
@@ -15,36 +15,24 @@ public class OnboardingService {
     static final int USERNAME_MAX = 64;
 
     @Inject
-    EntityManager em;
+    UserRepository userRepository;
 
     @Inject
     PasswordService passwordService;
 
-    @Inject
-    UserService userService;
-
+    @Transactional
     public User register(String rawUsername, String password, String passwordRepeat) {
         String username = validateUsername(rawUsername);
         validatePasswords(password, passwordRepeat);
 
-        if (userService.findByUsername(username).isPresent()) {
+        if (userRepository.findByUsername(username).isPresent()) {
             throw new UserFacingException("Dieser Benutzername ist bereits vergeben.");
         }
 
         User user = new User();
         user.setUsername(username);
         user.setPasswordHash(passwordService.hash(password));
-
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            em.persist(user);
-            tx.commit();
-        } catch (RuntimeException ex) {
-            if (tx.isActive()) tx.rollback();
-            throw new UserFacingException("Beim Anlegen des Accounts ist ein Fehler aufgetreten.", ex);
-        }
-        return user;
+        return userRepository.insert(user);
     }
 
     private String validateUsername(String raw) {
