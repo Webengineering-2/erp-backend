@@ -12,6 +12,8 @@ repositories {
 
 ext {
     junitVersion = '5.13.2'
+    hibernateVersion = '7.0.4.Final'
+    lombokVersion = '1.18.34'
 }
 
 tasks.withType(JavaCompile) {
@@ -19,18 +21,26 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    compileOnly('jakarta.data:jakarta.data-api:1.0.1')
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+
+    implementation('jakarta.data:jakarta.data-api:1.0.1')
     compileOnly('jakarta.servlet:jakarta.servlet-api:6.1.0')
     implementation('org.glassfish.jersey.containers:jersey-container-servlet:4.0.0-M2')
     implementation('org.glassfish.jersey.media:jersey-media-json-jackson:4.0.0-M2')
     implementation('org.glassfish.jersey.inject:jersey-cdi2-se:4.0.0-M2')
-    implementation('org.hibernate:hibernate-core:7.0.4.Final')
+    implementation("org.hibernate.orm:hibernate-core:${hibernateVersion}")
+    annotationProcessor("org.hibernate.orm:hibernate-processor:${hibernateVersion}")
     implementation('org.glassfish.jaxb:jaxb-runtime:4.0.5')
     implementation('org.hibernate.validator:hibernate-validator:9.0.1.Final')
     implementation('org.jboss.weld.se:weld-se-core:6.0.3.Final')
+    implementation('com.h2database:h2:2.3.232')
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 test {

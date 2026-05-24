@@ -4,6 +4,29 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
     <persistence-unit name="default">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <validation-mode>NONE</validation-mode>
 
+        <class>de.dhbw.erpbackend.domain.User</class>
+        <class>de.dhbw.erpbackend.domain.Log</class>
+        <class>de.dhbw.erpbackend.domain.Category</class>
+        <class>de.dhbw.erpbackend.domain.Product</class>
+        <class>de.dhbw.erpbackend.domain.Location</class>
+        <class>de.dhbw.erpbackend.domain.Customer</class>
+        <class>de.dhbw.erpbackend.domain.Item</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:file:./data/erp;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1"/>
+            <property name="jakarta.persistence.jdbc.user" value="sa"/>
+            <property name="jakarta.persistence.jdbc.password" value=""/>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
     </persistence-unit>
 </persistence>
