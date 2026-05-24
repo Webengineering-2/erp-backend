@@ -14,10 +14,17 @@ ext {
     junitVersion = '5.13.2'
     hibernateVersion = '7.0.4.Final'
     lombokVersion = '1.18.34'
+    tomcatVersion = '10.1.34'
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    devServer {
+        java.srcDirs = ['src/devServer/java']
+    }
 }
 
 dependencies {
@@ -27,20 +34,41 @@ dependencies {
     testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     implementation('jakarta.data:jakarta.data-api:1.0.1')
-    compileOnly('jakarta.servlet:jakarta.servlet-api:6.1.0')
-    implementation('org.glassfish.jersey.containers:jersey-container-servlet:4.0.0-M2')
-    implementation('org.glassfish.jersey.media:jersey-media-json-jackson:4.0.0-M2')
-    implementation('org.glassfish.jersey.inject:jersey-cdi2-se:4.0.0-M2')
+    providedCompile('jakarta.servlet:jakarta.servlet-api:6.0.0')
+    providedCompile('jakarta.servlet.jsp:jakarta.servlet.jsp-api:3.1.1')
+    implementation('jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0')
+    implementation('org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1')
+    implementation('org.glassfish.jersey.containers:jersey-container-servlet:3.1.10')
+    implementation('org.glassfish.jersey.media:jersey-media-json-jackson:3.1.10')
+    implementation('org.glassfish.jersey.inject:jersey-hk2:3.1.10')
     implementation("org.hibernate.orm:hibernate-core:${hibernateVersion}")
     annotationProcessor("org.hibernate.orm:hibernate-processor:${hibernateVersion}")
     implementation('org.glassfish.jaxb:jaxb-runtime:4.0.5')
-    implementation('org.hibernate.validator:hibernate-validator:9.0.1.Final')
-    implementation('org.jboss.weld.se:weld-se-core:6.0.3.Final')
+    implementation('jakarta.enterprise:jakarta.enterprise.cdi-api:4.0.1')
+    implementation('org.jboss.weld.servlet:weld-servlet-core:5.1.5.Final')
     implementation('com.h2database:h2:2.3.232')
+    implementation('at.favre.lib:bcrypt:0.10.2')
+
+    // Dev runner: separate source set with ONLY Tomcat on classpath so the webapp
+    // can own all app/library classes via its WebappClassLoader (no duplicates with
+    // the system classpath, which would break JPA metamodel identity).
+    devServerImplementation("org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}")
+    devServerImplementation("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}")
+    devServerImplementation("org.apache.tomcat.embed:tomcat-embed-el:${tomcatVersion}")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+}
+
+tasks.register('run', JavaExec) {
+    group = 'application'
+    description = 'Run the application against the built war using embedded Tomcat'
+    dependsOn 'war'
+    mainClass = 'de.dhbw.erpbackend.devserver.DevServer'
+    classpath = sourceSets.devServer.runtimeClasspath + sourceSets.devServer.output
+    systemProperty 'war.path', tasks.war.archiveFile.get().asFile.absolutePath
+    systemProperty 'server.port', System.getenv().getOrDefault('SERVER_PORT', '8080')
 }
 
 test {
