@@ -2,7 +2,6 @@ package de.dhbw.erpbackend.web;
 
 import de.dhbw.erpbackend.repository.UserRepository;
 import jakarta.inject.Inject;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +16,7 @@ public class RootServlet extends HttpServlet {
     UserRepository userRepository;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String ctx = req.getContextPath();
         if (SessionHelper.isLoggedIn(req)) {
             resp.sendRedirect(ctx + "/overview");
