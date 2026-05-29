@@ -61,11 +61,10 @@ class RepositoryIntegrationTest {
         em.getTransaction().commit();
     }
 
-    private <T> T persist(T entity) {
+    private <T> void persist(T entity) {
         em.getTransaction().begin();
         em.persist(entity);
         em.getTransaction().commit();
-        return entity;
     }
 
     @Test
@@ -189,7 +188,7 @@ class RepositoryIntegrationTest {
                 .setParameter("u", u)
                 .getResultList();
         assertEquals(1, logs.size());
-        assertEquals(LogType.USER_LOGIN, logs.get(0).getType());
-        assertEquals(u.getId(), logs.get(0).getUser().getId());
+        assertEquals(LogType.USER_LOGIN, logs.getFirst().getType());
+        assertEquals(u.getId(), logs.getFirst().getUser().getId());
     }
 }

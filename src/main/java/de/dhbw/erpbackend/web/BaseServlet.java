@@ -8,10 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-/**
- * Base for application servlets. Catches {@link UserFacingException} thrown
- * from {@code doGet}/{@code doPost} and renders it via {@link ErrorHelper}.
- */
 public abstract class BaseServlet extends HttpServlet {
 
     @Override

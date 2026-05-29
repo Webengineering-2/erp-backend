@@ -33,7 +33,6 @@ public class LoginServlet extends BaseServlet {
             resp.sendRedirect(req.getContextPath() + "/overview");
             return;
         }
-        req.setCharacterEncoding("UTF-8");
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
