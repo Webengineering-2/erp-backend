@@ -35,14 +35,16 @@ src/devServer/java/...DevServer.java  Embedded TomEE launcher (`./gradlew run`)
   - logged in → `/overview`
   - no user in DB → `/onboarding`
   - else → `/login`
-- `OnboardingServlet` — GET renders form, POST creates first user and logs in.
-- `LoginServlet` — placeholder, not yet implemented.
+- `OnboardingServlet` — GET renders form, POST creates first user and logs in. Both methods redirect to `/overview` if already logged in.
+- `LoginServlet` — GET renders form, POST authenticates via `LoginService` and logs in. Both methods redirect to `/overview` if already logged in.
 - `OverviewServlet` — extends `ProtectedServlet`, renders overview JSP.
 - `LogoutServlet` — `GET /logout`, invalidates session, redirects to `/`.
 
-### `ProtectedServlet`
+### `BaseServlet` / `ProtectedServlet`
 
-Base class for any route that requires an authenticated session. Overrides `service()` to redirect to `/` if `SessionHelper.isLoggedIn(req)` is false. Subclasses just implement `doGet`/`doPost`. Use this for any new authenticated page; do not re-write the session check inline.
+`BaseServlet` overrides `service()` to wrap `super.service()` in a try/catch for `UserFacingException` → `ErrorHelper.showError`. All application servlets extend it (directly or via `ProtectedServlet`), so `doGet`/`doPost` just *throw* `UserFacingException` — no local try/catch needed.
+
+`ProtectedServlet extends BaseServlet` adds the session check: redirects to `/` if `SessionHelper.isLoggedIn(req)` is false, otherwise delegates to `super.service()` (so the `UserFacingException` wrapper still applies). Use this for any new authenticated page; do not re-write the session check inline.
 
 ### `SessionHelper`
 
@@ -51,8 +53,8 @@ Session attribute is `username` (String). Helpers: `isLoggedIn`, `currentUsernam
 ### Error handling
 
 - `UserFacingException(message)` — `RuntimeException` whose `getMessage()` is shown to the user (German, full sentences).
-- Servlet pattern: catch `UserFacingException` explicitly, call `ErrorHelper.showError(req, resp, ex)` — this sets `errorMessage` attribute, sets status 400, forwards to `/WEB-INF/views/error.jsp`.
-- `web.xml` maps `<exception-type>java.lang.Throwable</exception-type>` to the same `error.jsp` as a fallback for anything that escapes a servlet's try/catch.
+- Servlet pattern: just *throw* `UserFacingException` from `doGet`/`doPost`. `BaseServlet.service()` catches it and calls `ErrorHelper.showError(req, resp, ex)` — this sets `errorMessage` attribute, sets status 400, forwards to `/WEB-INF/views/error.jsp`.
+- `web.xml` maps `<exception-type>java.lang.Throwable</exception-type>` to the same `error.jsp` as a fallback for anything else that escapes.
 - error.jsp renders `${errorMessage}` if present, otherwise a generic message; "OK" link goes to `/`.
 
 ### Transactions

@@ -1,7 +1,6 @@
 package de.dhbw.erpbackend.web;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -12,7 +11,7 @@ import java.io.IOException;
  * without a logged-in session is redirected to "/" before the concrete servlet
  * sees it.
  */
-public abstract class ProtectedServlet extends HttpServlet {
+public abstract class ProtectedServlet extends BaseServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
