@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <!DOCTYPE html>
 <html lang="de">
@@ -19,13 +18,13 @@
 	</p>
 
 	<a href="${pageContext.request.contextPath}/create">
-		<button	id="createBtn">Anlegen<img src="assets/create-dashboard.svg"/></button>
+		<button	id="createBtn">Anlegen<img src="assets/create-dashboard.svg" alt="Create"/></button>
 	</a>
 	<a href="${pageContext.request.contextPath}/stock">
-		<button	id="stockBtn">Bestände<img src="assets/magnifier.svg"/></button>
+		<button	id="stockBtn">Bestände<img src="assets/magnifier.svg" alt="Stock"/></button>
 	</a>
 	<a href="${pageContext.request.contextPath}/sold">
-		<button	id="soldBtn">Verkäufe<img src="assets/money-stack.svg"/></button>
+		<button	id="soldBtn">Verkäufe<img src="assets/money-stack.svg" alt="Sold"/></button>
 	</a>
 </body>
 </html>

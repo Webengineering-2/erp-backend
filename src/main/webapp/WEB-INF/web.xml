@@ -7,6 +7,9 @@
 
     <display-name>erp-backend</display-name>
 
+    <request-character-encoding>UTF-8</request-character-encoding>
+    <response-character-encoding>UTF-8</response-character-encoding>
+
     <jsp-config>
         <taglib>
             <taglib-uri>jakarta.tags.core</taglib-uri>
