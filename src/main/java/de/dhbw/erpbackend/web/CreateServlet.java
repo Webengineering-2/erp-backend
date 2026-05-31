@@ -7,6 +7,7 @@ import de.dhbw.erpbackend.repository.CategoryRepository;
 import de.dhbw.erpbackend.repository.CustomerRepository;
 import de.dhbw.erpbackend.repository.LocationRepository;
 import de.dhbw.erpbackend.repository.ProductRepository;
+import de.dhbw.erpbackend.service.CreationService;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -37,56 +38,32 @@ public class CreateServlet extends BaseServlet {
             throws ServletException, IOException {
 
         String view = request.getParameter("createView");
+        CreationService creationService = new CreationService();
+        if (view == null || view.isBlank()) {
+            view = "products";
+        }
         request.setAttribute("createView", view);
+
         String search = request.getParameter("search");
 
-        if ("products".equals(view)) {
+        if (view.equals("products")) {
 
-            List<Product> products;
-
-            if (search != null && !search.isBlank()) {
-                products = productRepository.findByNameLike(search);
-            } else {
-                products = productRepository.findAll().toList();
-            }
-
+            List<Product> products = creationService.getMatchingProducts(search) ;
             request.setAttribute("products", products);
         }
 
-        else if ("categories".equals(view)) {
-            List<Category> categories;
-
-            if (search != null && !search.isBlank()) {
-                categories = categoryRepository.findByNameLike(search);
-            } else {
-                categories = categoryRepository.findAll().toList();
-            }
-            request.setAttribute("categories",
-                    categoryRepository.findAll().toList());
+        else if (view.equals("categories")) {
+            List<Category> categories = creationService.getMatchingCategories(search) ;
+            request.setAttribute("categories", categoryRepository.findAll().toList());
         }
 
-        else if ("locations".equals(view)) {
-            List<Location> locations;
+        else if (view.equals("locations")) {
+            List<Location> locations = creationService.getMatchingLocations(search) ;
+            request.setAttribute("categories", categoryRepository.findAll().toList());}
 
-            if (search != null && !search.isBlank()) {
-                locations = locationRepository.findByNameLike(search);
-            } else {
-                locations = locationRepository.findAll().toList();
-            }
-            request.setAttribute("categories",
-                    categoryRepository.findAll().toList());
-        }
-
-        else if ("customers".equals(view)) {
-            List<Customer> customers;
-
-            if (search != null && !search.isBlank()) {
-                customers = customerRepository.findByNameLike(search);
-            } else {
-                customers = customerRepository.findAll().toList();
-            }
-            request.setAttribute("categories",
-                    categoryRepository.findAll().toList());
+        else if (view.equals("customers")) {
+            List<Customer> customers  = creationService.getMatchingCustomers(search) ;
+            request.setAttribute("categories", categoryRepository.findAll().toList());
         }
 
         request.getRequestDispatcher("/WEB-INF/views/create.jsp")
