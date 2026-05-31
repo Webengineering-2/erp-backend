@@ -13,4 +13,6 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     @Find
     List<Product> findByCategory(Category category);
+    @Find
+    List<Product> findByNameLike(String name);
 }
