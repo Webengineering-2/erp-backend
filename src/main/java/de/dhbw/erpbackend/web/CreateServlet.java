@@ -22,23 +22,14 @@ import java.util.List;
 public class CreateServlet extends BaseServlet {
 
     @Inject
-    private ProductRepository productRepository;
-
-    @Inject
-    private CategoryRepository categoryRepository;
-
-    @Inject
-    private LocationRepository locationRepository;
-
-    @Inject
-    private CustomerRepository customerRepository;
+    private CreationService creationService;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String view = request.getParameter("createView");
-        CreationService creationService = new CreationService();
+
         if (view == null || view.isBlank()) {
             view = "products";
         }
@@ -46,24 +37,23 @@ public class CreateServlet extends BaseServlet {
 
         String search = request.getParameter("search");
 
-        if (view.equals("products")) {
-
-            List<Product> products = creationService.getMatchingProducts(search) ;
-            request.setAttribute("products", products);
-        }
-
-        else if (view.equals("categories")) {
-            List<Category> categories = creationService.getMatchingCategories(search) ;
-            request.setAttribute("categories", categoryRepository.findAll().toList());
-        }
-
-        else if (view.equals("locations")) {
-            List<Location> locations = creationService.getMatchingLocations(search) ;
-            request.setAttribute("categories", categoryRepository.findAll().toList());}
-
-        else if (view.equals("customers")) {
-            List<Customer> customers  = creationService.getMatchingCustomers(search) ;
-            request.setAttribute("categories", categoryRepository.findAll().toList());
+        switch (view.toLowerCase()) {
+            case "products" -> {
+                List<Product> products = creationService.getMatchingProducts(search);
+                request.setAttribute("products", products);
+            }
+            case "categories" -> {
+                List<Category> categories = creationService.getMatchingCategories(search);
+                request.setAttribute("categories", categories);
+            }
+            case "locations" -> {
+                List<Location> locations = creationService.getMatchingLocations(search);
+                request.setAttribute("locations", locations);
+            }
+            case "customers" -> {
+                List<Customer> customers = creationService.getMatchingCustomers(search);
+                request.setAttribute("customers", customers);
+            }
         }
 
         request.getRequestDispatcher("/WEB-INF/views/create.jsp")

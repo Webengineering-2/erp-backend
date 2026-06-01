@@ -8,9 +8,9 @@
 <div class="sidebar">
     <ul>
         <li><a href="${pageContext.request.contextPath}/create?createView=categories">Produktkategorien</a></li>
-        <li><a href="${pageContext.request.contextPath}/createView=products">Produkte</a></li>
-        <li><a href="${pageContext.request.contextPath}/createView=locations">Lagerlocations</a></li>
-        <li><a href="${pageContext.request.contextPath}/createView=customers">Kunden</a></li>
+        <li><a href="${pageContext.request.contextPath}/create?createView=products">Produkte</a></li>
+        <li><a href="${pageContext.request.contextPath}/create?createView=locations">Lagerlocations</a></li>
+        <li><a href="${pageContext.request.contextPath}/create?createView=customers">Kunden</a></li>
     </ul>
 </div>
 </body>
