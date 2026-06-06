@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>Create</title>
-
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
     <style>
         .layout { display: flex; }
         .sidebar {
@@ -58,7 +58,7 @@
 
                 <button onclick="openCreateProductPopup()">+ Produkt erstellen</button>
             </div>
-
+            <div class="table-container">
             <table>
                 <tr>
                     <th>ID</th>
@@ -71,12 +71,13 @@
                         <td>${p.id}</td>
                         <td>${p.name}</td>
                         <td>
-                            <button>Edit</button>
+                            <button  onclick="window.open('edit-product?id=${p.id}', 'edit', 'width=500,height=600')">
+                                Edit
+                            </button>
 
-                            <form action="deleteProduct" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="${p.id}">
-                                <button type="submit">Delete</button>
-                            </form>
+                            <button  onclick="openDeletePopup('${p.id}', 'product', '${p.name}')">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -110,11 +111,13 @@
                     <tr>
                         <td>${c.id}</td>
                         <td>${c.name}</td>
-                        <td><button>Edit</button>
-                        <form action="deleteCategory" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="${c.id}">
-                            <button type="submit">Delete</button>
-                        </form>
+                        <td>
+                        <button onclick="window.open('edit-category?id=${c.id}', 'edit', 'width=500,height=600')">
+                            Edit
+                        </button>
+                            <button onclick="openDeletePopup('${c.id}', 'category', '${c.name}')">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -151,11 +154,12 @@
                         <td>${l.id}</td>
                         <td>${l.name}</td>
                         <td>
-                            <button>Edit</button>
-                            <form action="deleteLocation" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="${l.id}">
-                                <button type="submit">Delete</button>
-                            </form>
+                            <button onclick="window.open('edit-location?id=${l.id}', 'edit', 'width=500,height=600')">
+                                Edit
+                            </button>
+                            <button onclick="openDeletePopup('${l.id}', 'location', '${l.name}')">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -191,11 +195,12 @@
                         <td>${cu.id}</td>
                         <td>${cu.name}</td>
                         <td>
-                            <button>Edit</button>
-                            <form action="deleteCustomer" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="${cu.id}">
-                                <button type="submit">Delete</button>
-                            </form>
+                            <button onclick="window.open('edit-customer?id=${cu.id}', 'edit', 'width=500,height=600')">
+                                Edit
+                            </button>
+                            <button onclick="openDeletePopup('${cu.id}', 'customer', '${cu.name}')">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -203,7 +208,7 @@
             </table>
 
         </c:if>
-
+            </div>
         <c:if test="${createView == null}">
             <h3>Bitte Auswahl im Menü treffen</h3>
         </c:if>
@@ -215,17 +220,42 @@
 
 <script>
     function openCreateProductPopup() {
-        alert("Popup kommt später :)");
+        window.open(
+            'create-product',
+            'createProduct',
+            'width=500,height=600'
+        );
     }
     function openCreateCategoryPopup() {
-        alert("Popup kommt später :)");
+        window.open(
+            'create-category',
+            'createCategory',
+            'width=500,height=600'
+        );
     }
     function openCreateLocationPopup() {
-        alert("Popup kommt später :)");
+        window.open(
+            'create-location',
+            'createLocation',
+            'width=500,height=600'
+        );
     }
     function openCreateCustomerPopup() {
-        alert("Popup kommt später :)");
+        window.open(
+            'create-customer',
+            'createCustomer',
+            'width=500,height=600'
+        );
     }
+    function openDeletePopup(id, type, name) {
+        const url =
+            'delete-entity?id=' + id +
+            '&type=' + type +
+            '&name=' + encodeURIComponent(name);
+
+        window.open(url, 'delete', 'width=400,height=300');
+    }
+
 </script>
 
 </body>

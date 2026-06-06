@@ -3,15 +3,10 @@ import de.dhbw.erpbackend.domain.Category;
 import de.dhbw.erpbackend.domain.Customer;
 import de.dhbw.erpbackend.domain.Location;
 import de.dhbw.erpbackend.domain.Product;
-import de.dhbw.erpbackend.repository.CategoryRepository;
-import de.dhbw.erpbackend.repository.CustomerRepository;
-import de.dhbw.erpbackend.repository.LocationRepository;
-import de.dhbw.erpbackend.repository.ProductRepository;
 import de.dhbw.erpbackend.service.CreationService;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
