@@ -10,7 +10,6 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-@Transactional
 @ApplicationScoped
 public class CreationService {
     @Inject
@@ -21,51 +20,50 @@ public class CreationService {
     private LocationRepository locationRepository;
     @Inject
     private CategoryRepository categoryRepository;
-
+    @Transactional
     public List<Product> getMatchingProducts(String query) {
         if (query == null || query.isBlank()) {
             return productRepository.findAll().toList();
         }
-        return productRepository.findAll().filter(p -> p.getName() != null &&
-                        p.getName().toLowerCase().contains(query.toLowerCase())).toList();
+        return productRepository.findByNameLike(query);
     }
-
+    @Transactional
     public Product getProductById(Long id){
         if (id == null) {
             return null;
         }
             return productRepository.findById(id).orElse(null);
     }
+    @Transactional
     public void saveProduct(Product product){
         productRepository.save(product);
     }
-
+    @Transactional
     public List<Category> getMatchingCategories(String query) {
         if (query == null || query.isBlank()) {
             return categoryRepository.findAll().toList();
         }
-        return categoryRepository.findAll().filter(p -> p.getName() != null &&
-                p.getName().toLowerCase().contains(query.toLowerCase())).toList();
+        return categoryRepository.findByNameLike(query);
     }
-
+    @Transactional
     public Category getCategoriesById(Long id){
         if (id == null) {
             return null;
         }
             return categoryRepository.findById(id).orElse(null);
     }
+    @Transactional
     public void saveCategory(Category category){
         categoryRepository.save(category);
     }
-
+    @Transactional
     public List<Location> getMatchingLocations(String query) {
         if (query == null || query.isBlank()) {
             return locationRepository.findAll().toList();
         }
-        return locationRepository.findAll().filter(p -> p.getName() != null &&
-                p.getName().toLowerCase().contains(query.toLowerCase())).toList();
+        return locationRepository.findByNameLike(query);
     }
-
+    @Transactional
     public Location getLocationById(Long id){
 
         if (id == null) {
@@ -74,18 +72,18 @@ public class CreationService {
             return locationRepository.findById(id).orElse(null);
 
     }
-
+    @Transactional
     public void saveLocation(Location location){
         locationRepository.save(location);
     }
-
+    @Transactional
     public List<Customer> getMatchingCustomers(String query) {
         if (query == null || query.isBlank()) {
             return customerRepository.findAll().toList();
         }
-        return customerRepository.findAll().filter(p -> p.getName() != null &&
-                p.getName().toLowerCase().contains(query.toLowerCase())).toList();
+        return customerRepository.findByNameLike(query );
     }
+    @Transactional
     public Customer getCustomerById(Long id){
 
         if (id == null) {
@@ -94,6 +92,7 @@ public class CreationService {
             return customerRepository.findById(id).orElse(null);
 
     }
+    @Transactional
     public void saveCustomer(Customer customer){
         customerRepository.save(customer);
     }

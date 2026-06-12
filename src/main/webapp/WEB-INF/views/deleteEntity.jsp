@@ -1,40 +1,33 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 
-<html>
-<head>
-    <title>Delete</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
-</head>
-<body>
+<form class="form form--dialog">
 
-<form action="delete-entity" method="post">
+    <h2 class="form__title" id="deleteText">Löschen</h2>
 
-    <h2>${name} löschen</h2>
     <c:if test="${not empty error}">
-        <div style="color:red; font-weight:bold;">
+        <div class="alert alert--danger">
                 ${error}
         </div>
     </c:if>
 
-    <input type="hidden" name="type" value="${type}">
-    <input type="hidden" name="id" value="${id}">
+    <input id="deleteType" type="hidden" name="type">
+    <input id="deleteId" type="hidden" name="id">
 
-    <p>Sind Sie sicher, dass Sie wirklich löschen wollen?</p>
-    <p>Diese Aktion kann nicht rückgängig gemacht werden.</p>
+    <div class="form__text">
+        <p>Sind Sie sicher, dass Sie wirklich löschen wollen?</p>
+        <p>Diese Aktion kann nicht rückgängig gemacht werden.</p>
+    </div>
 
-    <button class="danger" type="submit"
-            onclick="return confirm('Wirklich löschen?')">
-        Löschen
-    </button>
+    <div class="form__actions">
+        <button class="btn btn-danger" type="button" onclick="confirmDelete()">
+            Löschen
+        </button>
 
-    <button type="button" onclick="window.close()">
-        Abbruch
-    </button>
+        <button class="btn btn-secondary" type="button"
+                onclick="closeDialog('deleteDialog')">
+            Abbruch
+        </button>
+    </div>
 
 </form>
-
-</body>
-</html>
-
-

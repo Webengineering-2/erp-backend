@@ -1,18 +1,40 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
-<html>
-<head>
-    <title>Sidebar</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
-</head>
-<body>
+
 <div class="sidebar">
-    <ul>
-        <li><a href="${pageContext.request.contextPath}/create?createView=categories">Produktkategorien</a></li>
-        <li><a href="${pageContext.request.contextPath}/create?createView=products">Produkte</a></li>
-        <li><a href="${pageContext.request.contextPath}/create?createView=locations">Lagerlocations</a></li>
-        <li><a href="${pageContext.request.contextPath}/create?createView=customers">Kunden</a></li>
-    </ul>
+
+    <nav class="sidebar__nav">
+        <ul class="sidebar__list">
+
+            <li class="sidebar__item">
+                <a class="sidebar__link"
+                   href="${pageContext.request.contextPath}/create?createView=categories">
+                    Produktkategorien
+                </a>
+            </li>
+
+            <li class="sidebar__item">
+                <a class="sidebar__link"
+                   href="${pageContext.request.contextPath}/create?createView=products">
+                    Produkte
+                </a>
+            </li>
+
+            <li class="sidebar__item">
+                <a class="sidebar__link"
+                   href="${pageContext.request.contextPath}/create?createView=locations">
+                    Lagerlocations
+                </a>
+            </li>
+
+            <li class="sidebar__item">
+                <a class="sidebar__link"
+                   href="${pageContext.request.contextPath}/create?createView=customers">
+                    Kunden
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
 </div>
-</body>
-</html>

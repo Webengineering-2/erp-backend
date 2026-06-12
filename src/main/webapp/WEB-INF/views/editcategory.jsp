@@ -1,30 +1,30 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
-<html>
-<head>
-    <title>Edit Category</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
-</head>
-<body>
+<form class="form form--dialog">
 
-<h2>Kategorie bearbeiten</h2>
+    <h2 class="form__title">Kategorie bearbeiten</h2>
 
-<form action="edit-category" method="post">
+    <input type="hidden" name="id" id="categoryId"/>
 
-    <input type="hidden" name="id" value="${category.id}" />
+    <div class="form__group">
+        <label class="form__label" for="editCategoryName">Name</label>
+        <input class="input" id="editCategoryName" type="text">
+    </div>
 
-    <label>Name</label>
-    <input type="text" name="name" value="${category.name}" />
+    <div class="form__group">
+        <label class="form__label" for="editCategoryDescription">Description</label>
+        <textarea class="textarea" id="editCategoryDescription" name="description"></textarea>
+    </div>
 
-    <label>Description</label>
-    <textarea name="description">${category.description}</textarea>
+    <div class="form__actions">
+        <button class="btn btn-primary" type="button" onclick="saveCategory()">
+            Speichern
+        </button>
 
-    <button class="primary" type="submit">Save</button>
-    <button type="button" onclick="window.close()">Cancel</button>
+        <button class="btn btn-secondary" type="button"
+                onclick="closeDialog('editCategoryDialog')">
+            Abbruch
+        </button>
+    </div>
 
 </form>
-
-</body>
-</html>
-
-

@@ -5,36 +5,45 @@
 <head>
     <title>Create</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
-    <style>
-        .layout { display: flex; }
-        .sidebar {
-            width: 220px;
-            background: #f3f3f3;
-            padding: 10px;
-        }
-
-        .content {
-            flex: 1;
-            padding: 20px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-        }
-
-        .top-bar {
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 
 <body>
+
+<dialog id="deleteDialog" class="dialog">
+    <jsp:include page="deleteEntity.jsp"/>
+</dialog>
+
+<dialog id="createProductDialog" class="dialog">
+    <jsp:include page="createproduct.jsp"/>
+</dialog>
+
+<dialog id="editProductDialog" class="dialog">
+    <jsp:include page="editproduct.jsp"/>
+</dialog>
+
+<dialog id="createCategoryDialog" class="dialog">
+    <jsp:include page="createcategory.jsp"/>
+</dialog>
+
+<dialog id="editCategoryDialog" class="dialog">
+    <jsp:include page="editcategory.jsp"/>
+</dialog>
+
+<dialog id="createLocationDialog" class="dialog">
+    <jsp:include page="createlocation.jsp"/>
+</dialog>
+
+<dialog id="editLocationDialog" class="dialog">
+    <jsp:include page="editlocation.jsp"/>
+</dialog>
+
+<dialog id="createCustomerDialog" class="dialog">
+    <jsp:include page="createcustomer.jsp"/>
+</dialog>
+
+<dialog id="editCustomerDialog" class="dialog">
+    <jsp:include page="editcustomer.jsp"/>
+</dialog>
 
 <div class="layout">
 
@@ -44,218 +53,382 @@
 
         <c:if test="${createView == 'products'}">
 
-            <div class="top-bar">
-                <form method="get" action="create" style="display:flex; gap:10px; align-items:center;">
+            <div class="topbar">
+                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
                     <input type="hidden" name="createView" value="${createView}" />
-
                     <input type="text"
+                           class="input"
                            name="search"
                            placeholder="Produkte suchen..."
                            value="${param.search}" />
 
-                    <button type="submit">Search</button>
+                    <button type="submit" class="btn">
+                        Search
+                    </button>
                 </form>
 
-                <button onclick="openCreateProductPopup()">+ Produkt erstellen</button>
+
+
+                <button type="button" class="btn btn-primary" onclick="openCreateProduct()">
+                    + Produkt
+                </button>
+
             </div>
-            <div class="table-container">
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Aktionen</th>
-                </tr>
 
-                <c:forEach var="p" items="${products}">
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
                     <tr>
-                        <td>${p.id}</td>
-                        <td>${p.name}</td>
-                        <td>
-                            <button  onclick="window.open('edit-product?id=${p.id}', 'edit', 'width=500,height=600')">
-                                Edit
-                            </button>
-
-                            <button  onclick="openDeletePopup('${p.id}', 'product', '${p.name}')">
-                                Delete
-                            </button>
-                        </td>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Actions</th>
                     </tr>
-                </c:forEach>
+                    </thead>
 
-            </table>
+                    <tbody>
+                    <c:forEach var="p" items="${products}">
+                        <tr>
+                            <td>${p.id}</td>
+                            <td>${p.name}</td>
+                            <td>
+                                <button class="btn" onclick="openEditProduct(${p.id})">Edit</button>
+                                <button class="btn btn-danger"
+                                        onclick="openDeleteDialog('${p.id}','product','${p.name}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
 
         </c:if>
+
         <c:if test="${createView == 'categories'}">
-            <div class="top-bar">
-                <form method="get" action="create" style="display:flex; gap:10px; align-items:center;">
+
+            <div class="topbar">
+
+                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
                     <input type="hidden" name="createView" value="${createView}" />
 
                     <input type="text"
+                           class="input"
                            name="search"
-                           placeholder="Kategorien suchen..."
+                           placeholder="Produkte suchen..."
                            value="${param.search}" />
 
-                    <button type="submit">Search</button>
+                    <button type="submit" class="btn">
+                        Search
+                    </button>
                 </form>
 
-                <button onclick="openCreateCategoryPopup()">+ Kategorie erstellen</button>
+                <button class="btn btn-primary" type="button" onclick="openCreateCategory()">
+                    + Kategorie
+                </button>
+
             </div>
 
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                </tr>
-
-                <c:forEach var="c" items="${categories}">
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
                     <tr>
-                        <td>${c.id}</td>
-                        <td>${c.name}</td>
-                        <td>
-                        <button onclick="window.open('edit-category?id=${c.id}', 'edit', 'width=500,height=600')">
-                            Edit
-                        </button>
-                            <button onclick="openDeletePopup('${c.id}', 'category', '${c.name}')">
-                                Delete
-                            </button>
-                        </td>
+                        <th>ID</th>
+                        <th>Name</th>
                     </tr>
-                </c:forEach>
+                    </thead>
 
-            </table>
+                    <tbody>
+                    <c:forEach var="c" items="${categories}">
+                        <tr>
+                            <td>${c.id}</td>
+                            <td>${c.name}</td>
+                            <td>
+                                <button class="btn" onclick="openEditCategory(${c.id})">Edit</button>
+                                <button class="btn btn-danger"
+                                        onclick="openDeleteDialog('${c.id}','category','${c.name}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
 
         </c:if>
+
         <c:if test="${createView == 'locations'}">
 
-        <div class="top-bar">
-            <form method="get" action="create" style="display:flex; gap:10px; align-items:center;">
-                <input type="hidden" name="createView" value="${createView}" />
+            <div class="topbar">
 
-                <input type="text"
-                       name="search"
-                       placeholder="Locations suchen..."
-                       value="${param.search}" />
-
-                <button type="submit">Search</button>
-            </form>
-
-            <button onclick="openCreateLocationPopup()">+ Lagerort erstellen</button>
-        </div>
-
-
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                </tr>
-
-                <c:forEach var="l" items="${locations}">
-                    <tr>
-                        <td>${l.id}</td>
-                        <td>${l.name}</td>
-                        <td>
-                            <button onclick="window.open('edit-location?id=${l.id}', 'edit', 'width=500,height=600')">
-                                Edit
-                            </button>
-                            <button onclick="openDeletePopup('${l.id}', 'location', '${l.name}')">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                </c:forEach>
-
-            </table>
-
-        </c:if>
-        <c:if test="${createView == 'customers'}">
-
-            <div class="top-bar">
-                <form method="get" action="create" style="display:flex; gap:10px; align-items:center;">
+                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
                     <input type="hidden" name="createView" value="${createView}" />
 
                     <input type="text"
+                           class="input"
                            name="search"
-                           placeholder="Kunden suchen..."
+                           placeholder="Produkte suchen..."
                            value="${param.search}" />
 
-                    <button type="submit">Search</button>
+                    <button type="submit" class="btn">
+                        Search
+                    </button>
                 </form>
 
-                <button onclick="openCreateCustomerPopup()">+ Kunden erstellen</button>
+                <button class="btn btn-primary" type="button" onclick="openCreateLocation()">
+                    + Location
+                </button>
+
             </div>
 
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                </tr>
-
-                <c:forEach var="cu" items="${customers}">
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
                     <tr>
-                        <td>${cu.id}</td>
-                        <td>${cu.name}</td>
-                        <td>
-                            <button onclick="window.open('edit-customer?id=${cu.id}', 'edit', 'width=500,height=600')">
-                                Edit
-                            </button>
-                            <button onclick="openDeletePopup('${cu.id}', 'customer', '${cu.name}')">
-                                Delete
-                            </button>
-                        </td>
+                        <th>ID</th>
+                        <th>Name</th>
                     </tr>
-                </c:forEach>
+                    </thead>
 
-            </table>
+                    <tbody>
+                    <c:forEach var="l" items="${locations}">
+                        <tr>
+                            <td>${l.id}</td>
+                            <td>${l.name}</td>
+                            <td>
+                                <button class="btn" onclick="openEditLocation(${l.id})">Edit</button>
+                                <button class="btn btn-danger"
+                                        onclick="openDeleteDialog('${l.id}','location','${l.name}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
 
         </c:if>
+
+        <c:if test="${createView == 'customers'}">
+
+            <div class="topbar">
+
+                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
+                    <input type="hidden" name="createView" value="${createView}" />
+
+                    <input type="text"
+                           class="input"
+                           name="search"
+                           placeholder="Produkte suchen..."
+                           value="${param.search}" />
+
+                    <button type="submit" class="btn">
+                        Search
+                    </button>
+                </form>
+
+                <button class="btn btn-primary" type="button" onclick="openCreateCustomer()">
+                    + Kunde
+                </button>
+
             </div>
-        <c:if test="${createView == null}">
-            <h3>Bitte Auswahl im Menü treffen</h3>
+
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <c:forEach var="cu" items="${customers}">
+                        <tr>
+                            <td>${cu.id}</td>
+                            <td>${cu.name}</td>
+                            <td>
+                                <button class="btn" onclick="openEditCustomer(${cu.id})">Edit</button>
+                                <button class="btn btn-danger"
+                                        onclick="openDeleteDialog('${cu.id}','customer','${cu.name}')">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+
         </c:if>
 
     </div>
-
-
 </div>
 
+</body>
+</html>
+
 <script>
-    function openCreateProductPopup() {
-        window.open(
-            'create-product',
-            'createProduct',
-            'width=500,height=600'
-        );
-    }
-    function openCreateCategoryPopup() {
-        window.open(
-            'create-category',
-            'createCategory',
-            'width=500,height=600'
-        );
-    }
-    function openCreateLocationPopup() {
-        window.open(
-            'create-location',
-            'createLocation',
-            'width=500,height=600'
-        );
-    }
-    function openCreateCustomerPopup() {
-        window.open(
-            'create-customer',
-            'createCustomer',
-            'width=500,height=600'
-        );
-    }
-    function openDeletePopup(id, type, name) {
-        const url =
-            'delete-entity?id=' + id +
-            '&type=' + type +
-            '&name=' + encodeURIComponent(name);
+    function openDialog(id){ document.getElementById(id).showModal(); }
+    function closeDialog(id){ document.getElementById(id).close(); }
 
-        window.open(url, 'delete', 'width=400,height=300');
+    function openCreateProduct(){ openDialog("createProductDialog"); }
+    function openCreateCategory(){ openDialog("createCategoryDialog"); }
+    function openCreateLocation(){ openDialog("createLocationDialog"); }
+    function openCreateCustomer(){ openDialog("createCustomerDialog"); }
+
+    function openEditProduct(id){
+        fetch("/api/product/id/"+id)
+            .then(r=>r.json())
+            .then(p=>{
+                document.getElementById("productId").value=p.id;
+                document.getElementById("editName").value=p.name;
+                document.getElementById("editPrice").value=p.unitPrice;
+                document.getElementById("editCategory").value=p.category.id;
+                openDialog("editProductDialog");
+            });
     }
 
+    function saveProduct(){
+        const id=document.getElementById("productId").value;
+        fetch("/api/product/id/"+id,{
+            method:"PUT",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("editName").value,
+                unitPrice:document.getElementById("editPrice").value,
+                category:{id:document.getElementById("editCategory").value}
+            })
+        }).then(()=>{closeDialog("editProductDialog");location.reload();});
+    }
+
+    function createProduct(){
+        fetch("/api/product",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("productName").value,
+                unitPrice:document.getElementById("productPrice").value,
+                category:{id:document.getElementById("categorySelect").value}
+            })
+        }).then(()=>{closeDialog("createProductDialog");location.reload();});
+    }
+
+    function openEditCategory(id){
+        fetch("/api/category/id/"+id)
+            .then(r=>r.json())
+            .then(c=>{
+                document.getElementById("categoryId").value=c.id;
+                document.getElementById("editCategoryName").value=c.name;
+                document.getElementById("editCategoryDescription").value=c.description;
+                openDialog("editCategoryDialog");
+            });
+    }
+
+    function saveCategory(){
+        const id=document.getElementById("categoryId").value;
+        fetch("/api/category/id/"+id,{
+            method:"PUT",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("editCategoryName").value,
+                description:document.getElementById("editCategoryDescription").value
+            })
+        }).then(()=>{closeDialog("editCategoryDialog");location.reload();});
+    }
+
+    function createCategory(){
+        fetch("/api/category",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("categoryName").value,
+                description:document.getElementById("categoryDescription").value
+            })
+        }).then(()=>{closeDialog("createCategoryDialog");location.reload();});
+    }
+
+    function openEditLocation(id){
+        fetch("/api/location/id/"+id)
+            .then(r=>r.json())
+            .then(l=>{
+                document.getElementById("locationId").value=l.id;
+                document.getElementById("locationName").value=l.name;
+                document.getElementById("locationDescription").value=l.description;
+                openDialog("editLocationDialog");
+            });
+    }
+
+    function saveLocation(){
+        const id=document.getElementById("locationId").value;
+        fetch("/api/location/id/"+id,{
+            method:"PUT",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("locationName").value,
+                description:document.getElementById("locationDescription").value
+            })
+        }).then(()=>{closeDialog("editLocationDialog");location.reload();});
+    }
+
+    function createLocation(){
+        fetch("/api/location",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("locationNameCreate").value,
+                description:document.getElementById("locationDescriptionCreate").value
+            })
+        }).then(()=>{closeDialog("createLocationDialog");location.reload();});
+    }
+
+    function openEditCustomer(id){
+        fetch("/api/customer/id/"+id)
+            .then(r=>r.json())
+            .then(c=>{
+                document.getElementById("customerId").value=c.id;
+                document.getElementById("editCustomerName").value=c.name;
+                openDialog("editCustomerDialog");
+            });
+    }
+
+    function saveCustomer(){
+        const id=document.getElementById("customerId").value;
+        fetch("/api/customer/id/"+id,{
+            method:"PUT",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("editCustomerName").value
+            })
+        }).then(()=>{closeDialog("editCustomerDialog");location.reload();});
+    }
+
+    function createCustomer(){
+        fetch("/api/customer",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                name:document.getElementById("customerName").value
+            })
+        }).then(()=>{closeDialog("createCustomerDialog");location.reload();});
+    }
+
+    function openDeleteDialog(id,type,name){
+        document.getElementById("deleteId").value=id;
+        document.getElementById("deleteType").value=type;
+        document.getElementById("deleteText").innerText=name+" wirklich löschen?";
+        openDialog("deleteDialog");
+    }
+
+    function confirmDelete(){
+        const id=document.getElementById("deleteId").value;
+        const type=document.getElementById("deleteType").value;
+
+        fetch("/api/"+type+"/id/"+id,{method:"DELETE"})
+            .then(()=>{closeDialog("deleteDialog");location.reload();});
+    }
 </script>
 
 </body>

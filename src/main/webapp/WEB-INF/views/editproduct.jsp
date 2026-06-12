@@ -1,44 +1,32 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 
-<html>
-<head>
-    <title>Edit Product</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
-</head>
-<body>
 
-<h2>Produkt bearbeiten</h2>
+<form>
 
-<form action="edit-product" method="post">
-
-    <input type="hidden" name="id" value="${product.id}" />
+    <input id="productId" type="hidden" name="id" value="${product.id}" />
 
     <label>Name</label>
-    <input type="text" name="name" value="${product.name}" />
+    <input id="editName" type="text" name="name" value="${product.name}" />
 
     <label>Price</label>
-    <input type="number" step="0.01" name="price" value="${product.unitPrice}" />
+    <input  id="editPrice" type="number" step="0.01" name="price" value="${product.unitPrice}" />
 
     <label>Category</label>
-    <select name="categoryId">
+    <select id="editCategory" name="categoryId">
         <c:forEach var="c" items="${categories}">
             <option value="${c.id}"
                     <c:if test="${c.id == product.category.id}">
                         selected
-                    </c:if>
-            >
+                    </c:if>>
                     ${c.name}
             </option>
         </c:forEach>
     </select>
 
-    <button class="primary" type="submit">Save</button>
-    <button type="button" onclick="window.close()">Cancel</button>
+    <button type="button" onclick="saveProduct()">Speichern</button>
+    <button type="button" onclick="closeDialog('editProductDialog')">Abbrechen</button>
 
 </form>
-
-</body>
-</html>
 
 
