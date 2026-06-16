@@ -24,7 +24,7 @@ public class CategoryResource {
     @GET
     @Path("/id/{id}")
     public Category getCategory(@PathParam("id") Long id) {
-        return creationService.getCategoriesById(id);
+        return creationService.getCategoryById(id);
     }
 
     @POST

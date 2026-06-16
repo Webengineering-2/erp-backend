@@ -46,15 +46,12 @@
 </dialog>
 
 <div class="layout">
-
     <jsp:include page="sidebar.jsp"/>
 
     <div class="content">
-
         <c:if test="${createView == 'products'}">
-
             <div class="topbar">
-                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
+                <form method="get" action="create" class="search-form">
                     <input type="hidden" name="createView" value="${createView}" />
                     <input type="text"
                            class="input"
@@ -67,22 +64,19 @@
                     </button>
                 </form>
 
-
-
                 <button type="button" class="btn btn-primary" onclick="openCreateProduct()">
                     + Produkt
                 </button>
-
             </div>
 
             <div class="table-wrapper">
                 <table class="table">
                     <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Actions</th>
-                    </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
                     </thead>
 
                     <tbody>
@@ -102,14 +96,11 @@
                     </tbody>
                 </table>
             </div>
-
         </c:if>
 
         <c:if test="${createView == 'categories'}">
-
             <div class="topbar">
-
-                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
+                <form method="get" action="create" class="search-form">
                     <input type="hidden" name="createView" value="${createView}" />
 
                     <input type="text"
@@ -126,7 +117,6 @@
                 <button class="btn btn-primary" type="button" onclick="openCreateCategory()">
                     + Kategorie
                 </button>
-
             </div>
 
             <div class="table-wrapper">
@@ -135,6 +125,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th></th>
                     </tr>
                     </thead>
 
@@ -155,14 +146,11 @@
                     </tbody>
                 </table>
             </div>
-
         </c:if>
 
         <c:if test="${createView == 'locations'}">
-
             <div class="topbar">
-
-                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
+                <form method="get" action="create" class="search-form">
                     <input type="hidden" name="createView" value="${createView}" />
 
                     <input type="text"
@@ -188,6 +176,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th></th>
                     </tr>
                     </thead>
 
@@ -208,14 +197,11 @@
                     </tbody>
                 </table>
             </div>
-
         </c:if>
 
         <c:if test="${createView == 'customers'}">
-
             <div class="topbar">
-
-                <form method="get" style="display:flex; gap:10px; flex-direction: row;" action="create" class="flex">
+                <form method="get" action="create" class="search-form">
                     <input type="hidden" name="createView" value="${createView}" />
 
                     <input type="text"
@@ -232,7 +218,6 @@
                 <button class="btn btn-primary" type="button" onclick="openCreateCustomer()">
                     + Kunde
                 </button>
-
             </div>
 
             <div class="table-wrapper">
@@ -241,6 +226,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th></th>
                     </tr>
                     </thead>
 
@@ -261,14 +247,9 @@
                     </tbody>
                 </table>
             </div>
-
         </c:if>
-
     </div>
 </div>
-
-</body>
-</html>
 
 <script>
     function openDialog(id){ document.getElementById(id).showModal(); }
@@ -281,8 +262,8 @@
 
     function openEditProduct(id){
         fetch("/api/product/id/"+id)
-            .then(r=>r.json())
-            .then(p=>{
+            .then(r => r.json())
+            .then(p => {
                 document.getElementById("productId").value=p.id;
                 document.getElementById("editName").value=p.name;
                 document.getElementById("editPrice").value=p.unitPrice;
@@ -301,7 +282,10 @@
                 unitPrice:document.getElementById("editPrice").value,
                 category:{id:document.getElementById("editCategory").value}
             })
-        }).then(()=>{closeDialog("editProductDialog");location.reload();});
+        }).then(() => {
+            closeDialog("editProductDialog");
+            location.reload();
+        });
     }
 
     function createProduct(){
@@ -313,7 +297,10 @@
                 unitPrice:document.getElementById("productPrice").value,
                 category:{id:document.getElementById("categorySelect").value}
             })
-        }).then(()=>{closeDialog("createProductDialog");location.reload();});
+        }).then(() => {
+            closeDialog("createProductDialog");
+            location.reload();
+        });
     }
 
     function openEditCategory(id){
@@ -336,7 +323,10 @@
                 name:document.getElementById("editCategoryName").value,
                 description:document.getElementById("editCategoryDescription").value
             })
-        }).then(()=>{closeDialog("editCategoryDialog");location.reload();});
+        }).then(() => {
+            closeDialog("editCategoryDialog");
+            location.reload();
+        });
     }
 
     function createCategory(){
@@ -347,7 +337,10 @@
                 name:document.getElementById("categoryName").value,
                 description:document.getElementById("categoryDescription").value
             })
-        }).then(()=>{closeDialog("createCategoryDialog");location.reload();});
+        }).then(() => {
+            closeDialog("createCategoryDialog");
+            location.reload();
+        });
     }
 
     function openEditLocation(id){
@@ -370,7 +363,10 @@
                 name:document.getElementById("locationName").value,
                 description:document.getElementById("locationDescription").value
             })
-        }).then(()=>{closeDialog("editLocationDialog");location.reload();});
+        }).then(() => {
+            closeDialog("editLocationDialog");
+            location.reload();
+        });
     }
 
     function createLocation(){
@@ -381,13 +377,16 @@
                 name:document.getElementById("locationNameCreate").value,
                 description:document.getElementById("locationDescriptionCreate").value
             })
-        }).then(()=>{closeDialog("createLocationDialog");location.reload();});
+        }).then(() => {
+            closeDialog("createLocationDialog");
+            location.reload();
+        });
     }
 
     function openEditCustomer(id){
         fetch("/api/customer/id/"+id)
-            .then(r=>r.json())
-            .then(c=>{
+            .then(r => r.json())
+            .then(c => {
                 document.getElementById("customerId").value=c.id;
                 document.getElementById("editCustomerName").value=c.name;
                 openDialog("editCustomerDialog");
@@ -402,7 +401,10 @@
             body:JSON.stringify({
                 name:document.getElementById("editCustomerName").value
             })
-        }).then(()=>{closeDialog("editCustomerDialog");location.reload();});
+        }).then(() => {
+            closeDialog("editCustomerDialog");
+            location.reload();
+        });
     }
 
     function createCustomer(){
@@ -412,7 +414,10 @@
             body:JSON.stringify({
                 name:document.getElementById("customerName").value
             })
-        }).then(()=>{closeDialog("createCustomerDialog");location.reload();});
+        }).then(() => {
+            closeDialog("createCustomerDialog");
+            location.reload();
+        });
     }
 
     function openDeleteDialog(id,type,name){
@@ -426,8 +431,11 @@
         const id=document.getElementById("deleteId").value;
         const type=document.getElementById("deleteType").value;
 
-        fetch("/api/"+type+"/id/"+id,{method:"DELETE"})
-            .then(()=>{closeDialog("deleteDialog");location.reload();});
+        fetch("/api/"+type+"/id/"+id, { method: "DELETE" })
+            .then(() => {
+                closeDialog("deleteDialog");
+                location.reload();
+            });
     }
 </script>
 

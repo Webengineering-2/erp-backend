@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import java.util.Objects;
 
 @ApplicationScoped
+@Transactional
 public class OnboardingService {
 
     static final int USERNAME_MIN = 3;
@@ -20,7 +21,6 @@ public class OnboardingService {
     @Inject
     PasswordService passwordService;
 
-    @Transactional
     public User register(String rawUsername, String password, String passwordRepeat) {
         String username = validateUsername(rawUsername);
         validatePasswords(password, passwordRepeat);

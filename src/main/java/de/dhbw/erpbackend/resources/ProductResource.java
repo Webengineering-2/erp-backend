@@ -1,6 +1,6 @@
 package de.dhbw.erpbackend.resources;
 
-
+import de.dhbw.erpbackend.domain.Category;
 import de.dhbw.erpbackend.domain.Product;
 import de.dhbw.erpbackend.service.CreationService;
 import jakarta.inject.Inject;
@@ -27,7 +27,6 @@ public class ProductResource {
     @GET
     @Path("/id/{id}")
     public Product getProduct(@PathParam("id") Long id) {
-        System.out.println("GET PRODUCT BY ID: " + id);
         return creationService.getProductById(id);
     }
 
@@ -40,9 +39,17 @@ public class ProductResource {
     @PUT
     @Path("/id/{id}")
     public Response update(@PathParam("id") Long id, Product product) {
-        product.setId(id);
-        creationService.saveProduct(product);
-        return Response.ok(product).build();
+        Product savable = creationService.getProductById(id);
+        if (savable == null) return Response.status(Response.Status.BAD_REQUEST).build();
+
+        savable.setName(product.getName());
+        savable.setUnitPrice(product.getUnitPrice());
+
+        Category saveCategory = creationService.getCategoryById(product.getCategory().getId());
+        savable.setCategory(saveCategory);
+
+        creationService.saveProduct(savable);
+        return Response.ok(savable).build();
     }
 
     @DELETE

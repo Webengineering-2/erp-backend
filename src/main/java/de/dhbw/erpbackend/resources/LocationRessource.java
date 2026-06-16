@@ -1,5 +1,5 @@
 package de.dhbw.erpbackend.resources;
-import de.dhbw.erpbackend.domain.Category;
+
 import de.dhbw.erpbackend.domain.Location;
 import de.dhbw.erpbackend.service.CreationService;
 import jakarta.inject.Inject;

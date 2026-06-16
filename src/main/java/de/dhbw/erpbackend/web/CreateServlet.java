@@ -1,4 +1,5 @@
 package de.dhbw.erpbackend.web;
+
 import de.dhbw.erpbackend.domain.Category;
 import de.dhbw.erpbackend.domain.Customer;
 import de.dhbw.erpbackend.domain.Location;
@@ -36,6 +37,8 @@ public class CreateServlet extends BaseServlet {
             case "products" -> {
                 List<Product> products = creationService.getMatchingProducts(search);
                 request.setAttribute("products", products);
+                List<Category> categories = creationService.getMatchingCategories(null);
+                request.setAttribute("categories", categories);
             }
             case "categories" -> {
                 List<Category> categories = creationService.getMatchingCategories(search);
