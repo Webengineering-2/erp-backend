@@ -1,3 +1,5 @@
+/* General - Page layout */
+
 body {
     margin: 0;
 }
@@ -7,6 +9,8 @@ body {
     background-color: #f4f6f9;
     min-height: calc(100vh - 4rem - 1px);
 }
+
+/* Sidebar */
 
 .sidebar {
     width: 240px;
@@ -39,6 +43,8 @@ body {
     background: #374151;
     color: white;
 }
+
+/* /create route styles */
 
 .topbar {
     background: white;
@@ -150,4 +156,51 @@ body {
 
 .dialog-input {
     display: contents;
+}
+
+/* Header Styles */
+
+#header {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4rem;
+    height: 4rem;
+    border-bottom: 1px solid black;
+    background-color: lightgray;
+}
+#header h1 {
+    margin-left: 1rem;
+}
+
+#header-button-group {
+    display: flex;
+    flex-direction: row;
+    gap: .5rem;
+    align-items: center;
+    margin-right: 1rem;
+}
+#profile-button {
+    anchor-name: --profile-button;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+}
+#profile-popover {
+    position-anchor: --profile-button;
+    position-area: bottom span-left;
+    margin: 0;
+    padding: .5rem;
+    border: 1px solid black;
+    background-color: lightgray;
+}
+#profile-popover ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
 }
