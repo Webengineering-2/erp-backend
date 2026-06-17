@@ -8,6 +8,7 @@
 </head>
 
 <body>
+<jsp:include page="../components/header.jsp"/>
 
 <dialog id="deleteDialog" class="dialog">
     <jsp:include page="deleteEntity.jsp"/>
