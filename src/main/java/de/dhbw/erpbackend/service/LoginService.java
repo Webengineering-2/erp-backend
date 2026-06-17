@@ -4,10 +4,12 @@ import de.dhbw.erpbackend.domain.User;
 import de.dhbw.erpbackend.repository.UserRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.Optional;
 
 @ApplicationScoped
+@Transactional
 public class LoginService {
 
     static final String GENERIC_ERROR = "Benutzername oder Passwort ist falsch.";
