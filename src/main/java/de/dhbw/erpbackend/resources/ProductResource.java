@@ -9,7 +9,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-@ApplicationPath("/api")
 @Path("/product")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -19,13 +18,13 @@ public class ProductResource {
     private CreationService creationService;
 
     @GET
-    @Path("/all")
+    @Path("/")
     public List<Product> getProducts(@QueryParam("q") String query) {
         return creationService.getMatchingProducts(query);
     }
 
     @GET
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Product getProduct(@PathParam("id") Long id) {
         return creationService.getProductById(id);
     }
@@ -37,7 +36,7 @@ public class ProductResource {
     }
 
     @PUT
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Response update(@PathParam("id") Long id, Product product) {
         Product savable = creationService.getProductById(id);
         if (savable == null) return Response.status(Response.Status.BAD_REQUEST).build();
@@ -53,7 +52,7 @@ public class ProductResource {
     }
 
     @DELETE
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         creationService.deleteProduct(id);
         return Response.noContent().build();

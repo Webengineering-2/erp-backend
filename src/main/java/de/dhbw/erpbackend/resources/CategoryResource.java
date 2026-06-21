@@ -16,13 +16,13 @@ public class CategoryResource {
     private CreationService creationService;
 
     @GET
-    @Path("/all")
+    @Path("/")
     public List<Category> getCategory(@QueryParam("q") String query) {
         return creationService.getMatchingCategories(query);
     }
 
     @GET
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Category getCategory(@PathParam("id") Long id) {
         return creationService.getCategoryById(id);
     }
@@ -34,7 +34,7 @@ public class CategoryResource {
     }
 
     @PUT
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Response update(@PathParam("id") Long id, Category category) {
         category.setId(id);
         creationService.saveCategory(category);
@@ -42,7 +42,7 @@ public class CategoryResource {
     }
 
     @DELETE
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         creationService.deleteCategory(id);
         return Response.noContent().build();
