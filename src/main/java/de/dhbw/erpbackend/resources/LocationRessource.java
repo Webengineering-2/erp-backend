@@ -16,13 +16,13 @@ public class LocationRessource {
     private CreationService creationService;
 
     @GET
-    @Path("/all")
+    @Path("/")
     public List<Location> getLocation(@QueryParam("q") String query) {
         return creationService.getMatchingLocations(query);
     }
 
     @GET
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Location getLocation(@PathParam("id") Long id) {
         return creationService.getLocationById(id);
     }
@@ -34,7 +34,7 @@ public class LocationRessource {
     }
 
     @PUT
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Response update(@PathParam("id") Long id, Location location) {
         location.setId(id);
         creationService.saveLocation(location);
@@ -42,7 +42,7 @@ public class LocationRessource {
     }
 
     @DELETE
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         creationService.deleteLocation(id);
         return Response.noContent().build();

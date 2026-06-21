@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/create")
-public class CreateServlet extends BaseServlet {
+public class CreateServlet extends ProtectedServlet {
 
     @Inject
     private CreationService creationService;
