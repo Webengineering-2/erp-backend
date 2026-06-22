@@ -1,6 +1,7 @@
 .gradle
 build/
 data/
+docs/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -11,6 +12,8 @@ data/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/jsLibraryMappings.xml
+.idea/gradle.xml
 *.iws
 *.iml
 *.ipr
@@ -42,6 +45,3 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-
-## ours
-.idea/gradle.xml

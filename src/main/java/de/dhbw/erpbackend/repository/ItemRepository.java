@@ -6,7 +6,9 @@ import de.dhbw.erpbackend.domain.Location;
 import de.dhbw.erpbackend.domain.Product;
 import jakarta.data.repository.CrudRepository;
 import jakarta.data.repository.Find;
+import jakarta.data.repository.Insert;
 import jakarta.data.repository.Repository;
+import jakarta.data.repository.Update;
 
 import java.util.List;
 
@@ -21,4 +23,12 @@ public interface ItemRepository extends CrudRepository<Item, Long> {
 
     @Find
     List<Item> findByStatus(ItemStatus status);
+
+    // Explicit INSERT / UPDATE instead of the inherited save()
+    // Avoid Bug with H2's MERGE
+    @Insert
+    Item insert(Item item);
+
+    @Update
+    Item update(Item item);
 }
