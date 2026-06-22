@@ -4,7 +4,7 @@
 <div id="header">
     <h1>Warenwirtschaftsprogramm</h1>
     <div id="header-button-group">
-        <a href="${pageContext.request.contextPath}/create.jsp">
+        <a href="${pageContext.request.contextPath}/create/products.jsp">
             <button>+ Anlegen</button>
         </a>
         <a href="${pageContext.request.contextPath}/stock.jsp">

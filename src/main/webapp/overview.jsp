@@ -22,7 +22,7 @@
 		<a href="${pageContext.request.contextPath}/logout">Abmelden</a>
 	</p>
 
-	<a href="${pageContext.request.contextPath}/create.jsp">
+	<a href="${pageContext.request.contextPath}/create/products.jsp">
 		<button	id="createBtn">Anlegen<img src="assets/create-dashboard.svg" alt="Create"/></button>
 	</a>
 	<a href="${pageContext.request.contextPath}/stock">

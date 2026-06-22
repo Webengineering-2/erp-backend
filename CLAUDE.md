@@ -25,7 +25,8 @@ src/main/java/de/dhbw/erpbackend/
   service/       @ApplicationScoped CDI beans, @Transactional methods
   web/           @WebServlet servlets, JSP forwards
   HelloApplication / HelloResource    JAX-RS sample, served at /api/*
-src/main/webapp/                 page JSPs, served directly (login, onboarding, overview, create)
+src/main/webapp/                 page JSPs, served directly (login, onboarding, overview)
+src/main/webapp/create/          one page per entity (products, categories, locations, customers)
 src/main/webapp/WEB-INF/components/  <jsp:include> fragments (header, sidebar, dialogs)
 src/main/webapp/WEB-INF/tags/    JSP tag files (auth guards)
 src/main/webapp/WEB-INF/views/   error.jsp only (container error target, not navigable)
@@ -34,7 +35,9 @@ src/devServer/java/...DevServer.java  Embedded TomEE launcher (`./gradlew run`)
 
 ### Servlets and routing
 
-**View philosophy:** Page JSPs live in `webapp/` and are reached directly by URL (e.g. `/create.jsp`). They pull their own data by calling `@Named` services from EL (`${creationService.getMatchingProducts(param.search)}`) — no servlet sets request attributes for rendering. Display logic (which view, which list, search filtering) lives in the JSP via JSTL. Servlets remain only for side-effecting controller actions (authenticate, register, logout) and root routing.
+**View philosophy:** Page JSPs live in `webapp/` and are reached directly by URL. They pull their own data by calling `@Named` services from EL (`${creationService.getMatchingProducts(param.search)}`) — no servlet sets request attributes for rendering. Display logic (search filtering, list rendering) lives in the JSP via JSTL. Servlets remain only for side-effecting controller actions (authenticate, register, logout) and root routing.
+
+**One page per view:** the create/management area is one JSP per entity under `webapp/create/` — `products.jsp` (the default), `categories.jsp`, `locations.jsp`, `customers.jsp`. Each is its own URL, calls only its own service method, and includes only its own create/edit dialogs (plus the shared `deleteEntity` dialog, header, sidebar). There is no `createView` dispatch param — the old single `create.jsp` that conditionally rendered all four views was split to fix exactly that. The search/table markup is intentionally duplicated across the four pages rather than abstracted.
 
 - `RootServlet` (`""`) — routes `/` based on session + DB state:
   - logged in → `/overview.jsp`
@@ -44,13 +47,13 @@ src/devServer/java/...DevServer.java  Embedded TomEE launcher (`./gradlew run`)
 - `LoginServlet` — POST only: authenticates via `LoginService` and logs in, redirects to `/overview.jsp`. The form is `login.jsp` (served directly).
 - `LogoutServlet` — `GET /logout`, invalidates session, redirects to `/`.
 
-(`OverviewServlet` and `CreateServlet` were removed — `overview.jsp`/`create.jsp` are served directly and call services themselves.)
+(`OverviewServlet` and `CreateServlet` were removed — `overview.jsp` and the `create/*.jsp` pages are served directly and call services themselves.)
 
 ### Auth: JSP tag files (not a servlet base class)
 
 Since page JSPs sit in `webapp/` they aren't protected by a servlet, so guards live in tag files under `WEB-INF/tags/`, included at the top of each page:
 
-- `<auth:requireLogin/>` — protected pages (`overview.jsp`, `create.jsp`): redirects to `/` when no user in session.
+- `<auth:requireLogin/>` — protected pages (`overview.jsp`, all `create/*.jsp`): redirects to `/` when no user in session.
 - `<auth:redirectIfLoggedIn/>` — public pages (`login.jsp`, `onboarding.jsp`): redirects to `/overview.jsp` when already logged in.
 
 Both use `<c:redirect>` (which throws `SkipPageException`, aborting the rest of the page). Declare with `<%@ taglib prefix="auth" tagdir="/WEB-INF/tags" %>`. **Every new protected page in `webapp/` must start with `<auth:requireLogin/>`** — the guard is opt-in per page.
