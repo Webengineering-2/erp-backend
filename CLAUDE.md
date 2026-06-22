@@ -11,7 +11,7 @@ Jakarta EE 10 ERP backend. Java 25, Gradle 9.5, Apache TomEE Embedded 10.1.5, Hi
 
 Server is at `http://localhost:8080/`. Override port with `SERVER_PORT=9090`.
 
-The H2 database lives at `./data/erp.*`. Delete `data/` to start clean.
+The H2 database lives at `./data/erp.*`. **Do not delete `data/`** — it holds the developer's working state. Log in with the existing dev account `admin` / `123` instead of wiping and re-onboarding.
 
 **JVM:** Pinned to JDK 25 via toolchain. 
 ## Architecture
