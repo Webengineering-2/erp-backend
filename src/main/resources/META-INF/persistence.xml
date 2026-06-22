@@ -6,7 +6,6 @@
     <persistence-unit name="default" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>erpDataSource</jta-data-source>
-        <validation-mode>NONE</validation-mode>
 
         <class>de.dhbw.erpbackend.domain.User</class>
         <class>de.dhbw.erpbackend.domain.Log</class>
@@ -17,6 +16,7 @@
         <class>de.dhbw.erpbackend.domain.Item</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <validation-mode>NONE</validation-mode>
 
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

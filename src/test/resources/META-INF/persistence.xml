@@ -10,7 +10,6 @@
     -->
     <persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <validation-mode>NONE</validation-mode>
 
         <class>de.dhbw.erpbackend.domain.User</class>
         <class>de.dhbw.erpbackend.domain.Log</class>
@@ -21,6 +20,7 @@
         <class>de.dhbw.erpbackend.domain.Item</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <validation-mode>NONE</validation-mode>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
