@@ -7,10 +7,12 @@ import de.dhbw.erpbackend.domain.Product;
 import de.dhbw.erpbackend.repository.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 
+@Named
 @ApplicationScoped
 @Transactional
 public class CreationService {

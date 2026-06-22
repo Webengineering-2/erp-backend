@@ -25,26 +25,41 @@ src/main/java/de/dhbw/erpbackend/
   service/       @ApplicationScoped CDI beans, @Transactional methods
   web/           @WebServlet servlets, JSP forwards
   HelloApplication / HelloResource    JAX-RS sample, served at /api/*
-src/main/webapp/WEB-INF/views/  JSPs (hidden from direct access)
+src/main/webapp/                 page JSPs, served directly (login, onboarding, overview, create)
+src/main/webapp/WEB-INF/components/  <jsp:include> fragments (header, sidebar, dialogs)
+src/main/webapp/WEB-INF/tags/    JSP tag files (auth guards)
+src/main/webapp/WEB-INF/views/   error.jsp only (container error target, not navigable)
 src/devServer/java/...DevServer.java  Embedded TomEE launcher (`./gradlew run`)
 ```
 
 ### Servlets and routing
 
+**View philosophy:** Page JSPs live in `webapp/` and are reached directly by URL (e.g. `/create.jsp`). They pull their own data by calling `@Named` services from EL (`${creationService.getMatchingProducts(param.search)}`) — no servlet sets request attributes for rendering. Display logic (which view, which list, search filtering) lives in the JSP via JSTL. Servlets remain only for side-effecting controller actions (authenticate, register, logout) and root routing.
+
 - `RootServlet` (`""`) — routes `/` based on session + DB state:
-  - logged in → `/overview`
-  - no user in DB → `/onboarding`
-  - else → `/login`
-- `OnboardingServlet` — GET renders form, POST creates first user and logs in. Both methods redirect to `/overview` if already logged in.
-- `LoginServlet` — GET renders form, POST authenticates via `LoginService` and logs in. Both methods redirect to `/overview` if already logged in.
-- `OverviewServlet` — extends `ProtectedServlet`, renders overview JSP.
+  - logged in → `/overview.jsp`
+  - no user in DB → `/onboarding.jsp`
+  - else → `/login.jsp`
+- `OnboardingServlet` — POST only: creates first user and logs in, redirects to `/overview.jsp`. The form is `onboarding.jsp` (served directly).
+- `LoginServlet` — POST only: authenticates via `LoginService` and logs in, redirects to `/overview.jsp`. The form is `login.jsp` (served directly).
 - `LogoutServlet` — `GET /logout`, invalidates session, redirects to `/`.
+
+(`OverviewServlet` and `CreateServlet` were removed — `overview.jsp`/`create.jsp` are served directly and call services themselves.)
+
+### Auth: JSP tag files (not a servlet base class)
+
+Since page JSPs sit in `webapp/` they aren't protected by a servlet, so guards live in tag files under `WEB-INF/tags/`, included at the top of each page:
+
+- `<auth:requireLogin/>` — protected pages (`overview.jsp`, `create.jsp`): redirects to `/` when no user in session.
+- `<auth:redirectIfLoggedIn/>` — public pages (`login.jsp`, `onboarding.jsp`): redirects to `/overview.jsp` when already logged in.
+
+Both use `<c:redirect>` (which throws `SkipPageException`, aborting the rest of the page). Declare with `<%@ taglib prefix="auth" tagdir="/WEB-INF/tags" %>`. **Every new protected page in `webapp/` must start with `<auth:requireLogin/>`** — the guard is opt-in per page.
 
 ### `BaseServlet` / `ProtectedServlet`
 
-`BaseServlet` overrides `service()` to wrap `super.service()` in a try/catch for `UserFacingException` → `ErrorHelper.showError`. All application servlets extend it (directly or via `ProtectedServlet`), so `doGet`/`doPost` just *throw* `UserFacingException` — no local try/catch needed.
+`BaseServlet` overrides `service()` to wrap `super.service()` in a try/catch for `UserFacingException` → `ErrorHelper.showError`. Application servlets extend it, so `doGet`/`doPost` just *throw* `UserFacingException` — no local try/catch needed.
 
-`ProtectedServlet extends BaseServlet` adds the session check: redirects to `/` if `SessionHelper.isLoggedIn(req)` is false, otherwise delegates to `super.service()` (so the `UserFacingException` wrapper still applies). Use this for any new authenticated page; do not re-write the session check inline.
+`ProtectedServlet extends BaseServlet` adds a session check (redirect to `/` if not logged in). It is **currently unused** — page auth now lives in the `requireLogin` tag — but kept for any future authenticated servlet endpoint.
 
 ### `SessionHelper`
 

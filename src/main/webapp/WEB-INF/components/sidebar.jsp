@@ -6,28 +6,28 @@
         <ul>
             <li>
                 <a class="sidebar-link"
-                   href="${pageContext.request.contextPath}/create?createView=categories">
+                   href="${pageContext.request.contextPath}/create.jsp?createView=categories">
                     Produktkategorien
                 </a>
             </li>
 
             <li>
                 <a class="sidebar-link"
-                   href="${pageContext.request.contextPath}/create?createView=products">
+                   href="${pageContext.request.contextPath}/create.jsp?createView=products">
                     Produkte
                 </a>
             </li>
 
             <li>
                 <a class="sidebar-link"
-                   href="${pageContext.request.contextPath}/create?createView=locations">
+                   href="${pageContext.request.contextPath}/create.jsp?createView=locations">
                     Lagerlocations
                 </a>
             </li>
 
             <li>
                 <a class="sidebar-link"
-                   href="${pageContext.request.contextPath}/create?createView=customers">
+                   href="${pageContext.request.contextPath}/create.jsp?createView=customers">
                     Kunden
                 </a>
             </li>

@@ -19,13 +19,13 @@ public class RootServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String ctx = req.getContextPath();
         if (SessionHelper.isLoggedIn(req)) {
-            resp.sendRedirect(ctx + "/overview");
+            resp.sendRedirect(ctx + "/overview.jsp");
             return;
         }
         if (userRepository.count() == 0) {
-            resp.sendRedirect(ctx + "/onboarding");
+            resp.sendRedirect(ctx + "/onboarding.jsp");
             return;
         }
-        resp.sendRedirect(ctx + "/login");
+        resp.sendRedirect(ctx + "/login.jsp");
     }
 }
