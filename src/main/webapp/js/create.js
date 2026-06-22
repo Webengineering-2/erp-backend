@@ -1,10 +1,16 @@
 function openDialog(id){ document.getElementById(id).showModal(); }
 function closeDialog(id){ document.getElementById(id).close(); }
 
-function openCreateProduct(){ openDialog("createProductDialog"); }
-function openCreateCategory(){ openDialog("createCategoryDialog"); }
-function openCreateLocation(){ openDialog("createLocationDialog"); }
-function openCreateCustomer(){ openDialog("createCustomerDialog"); }
+function openCreateDialog(id){
+    const form = document.getElementById(id).querySelector("form");
+    if (form) form.reset();
+    openDialog(id);
+}
+
+function openCreateProduct(){ openCreateDialog("createProductDialog"); }
+function openCreateCategory(){ openCreateDialog("createCategoryDialog"); }
+function openCreateLocation(){ openCreateDialog("createLocationDialog"); }
+function openCreateCustomer(){ openCreateDialog("createCustomerDialog"); }
 
 function openEditProduct(id){
     fetch("/api/product/"+id)

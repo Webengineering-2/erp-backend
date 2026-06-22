@@ -1,9 +1,7 @@
 package de.dhbw.erpbackend.repository;
 
 import de.dhbw.erpbackend.domain.Category;
-import de.dhbw.erpbackend.domain.Product;
 import jakarta.data.repository.CrudRepository;
-import jakarta.data.repository.Find;
 import jakarta.data.repository.Query;
 import jakarta.data.repository.Repository;
 

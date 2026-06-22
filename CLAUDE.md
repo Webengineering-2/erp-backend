@@ -11,7 +11,7 @@ Jakarta EE 10 ERP backend. Java 25, Gradle 9.5, Apache TomEE Embedded 10.1.5, Hi
 
 Server is at `http://localhost:8080/`. Override port with `SERVER_PORT=9090`.
 
-The H2 database lives at `./data/erp.*`. Delete `data/` to start clean.
+The H2 database lives at `./data/erp.*`. **Do not delete `data/`** — it holds the developer's working state. Log in with the existing dev account `admin` / `123` instead of wiping and re-onboarding.
 
 **JVM:** Pinned to JDK 25 via toolchain. 
 ## Architecture
@@ -25,26 +25,44 @@ src/main/java/de/dhbw/erpbackend/
   service/       @ApplicationScoped CDI beans, @Transactional methods
   web/           @WebServlet servlets, JSP forwards
   HelloApplication / HelloResource    JAX-RS sample, served at /api/*
-src/main/webapp/WEB-INF/views/  JSPs (hidden from direct access)
+src/main/webapp/                 page JSPs, served directly (login, onboarding, overview)
+src/main/webapp/create/          one page per entity (products, categories, locations, customers)
+src/main/webapp/WEB-INF/components/  <jsp:include> fragments (header, sidebar, dialogs)
+src/main/webapp/WEB-INF/tags/    JSP tag files (auth guards)
+src/main/webapp/WEB-INF/views/   error.jsp only (container error target, not navigable)
 src/devServer/java/...DevServer.java  Embedded TomEE launcher (`./gradlew run`)
 ```
 
 ### Servlets and routing
 
+**View philosophy:** Page JSPs live in `webapp/` and are reached directly by URL. They pull their own data by calling `@Named` services from EL (`${creationService.getMatchingProducts(param.search)}`) — no servlet sets request attributes for rendering. Display logic (search filtering, list rendering) lives in the JSP via JSTL. Servlets remain only for side-effecting controller actions (authenticate, register, logout) and root routing.
+
+**One page per view:** the create/management area is one JSP per entity under `webapp/create/` — `products.jsp` (the default), `categories.jsp`, `locations.jsp`, `customers.jsp`. Each is its own URL, calls only its own service method, and includes only its own create/edit dialogs (plus the shared `deleteEntity` dialog, header, sidebar). There is no `createView` dispatch param — the old single `create.jsp` that conditionally rendered all four views was split to fix exactly that. The search/table markup is intentionally duplicated across the four pages rather than abstracted.
+
 - `RootServlet` (`""`) — routes `/` based on session + DB state:
-  - logged in → `/overview`
-  - no user in DB → `/onboarding`
-  - else → `/login`
-- `OnboardingServlet` — GET renders form, POST creates first user and logs in. Both methods redirect to `/overview` if already logged in.
-- `LoginServlet` — GET renders form, POST authenticates via `LoginService` and logs in. Both methods redirect to `/overview` if already logged in.
-- `OverviewServlet` — extends `ProtectedServlet`, renders overview JSP.
+  - logged in → `/overview.jsp`
+  - no user in DB → `/onboarding.jsp`
+  - else → `/login.jsp`
+- `OnboardingServlet` — POST only: creates first user and logs in, redirects to `/overview.jsp`. The form is `onboarding.jsp` (served directly).
+- `LoginServlet` — POST only: authenticates via `LoginService` and logs in, redirects to `/overview.jsp`. The form is `login.jsp` (served directly).
 - `LogoutServlet` — `GET /logout`, invalidates session, redirects to `/`.
+
+(`OverviewServlet` and `CreateServlet` were removed — `overview.jsp` and the `create/*.jsp` pages are served directly and call services themselves.)
+
+### Auth: JSP tag files (not a servlet base class)
+
+Since page JSPs sit in `webapp/` they aren't protected by a servlet, so guards live in tag files under `WEB-INF/tags/`, included at the top of each page:
+
+- `<auth:requireLogin/>` — protected pages (`overview.jsp`, all `create/*.jsp`): redirects to `/` when no user in session.
+- `<auth:redirectIfLoggedIn/>` — public pages (`login.jsp`, `onboarding.jsp`): redirects to `/overview.jsp` when already logged in.
+
+Both use `<c:redirect>` (which throws `SkipPageException`, aborting the rest of the page). Declare with `<%@ taglib prefix="auth" tagdir="/WEB-INF/tags" %>`. **Every new protected page in `webapp/` must start with `<auth:requireLogin/>`** — the guard is opt-in per page.
 
 ### `BaseServlet` / `ProtectedServlet`
 
-`BaseServlet` overrides `service()` to wrap `super.service()` in a try/catch for `UserFacingException` → `ErrorHelper.showError`. All application servlets extend it (directly or via `ProtectedServlet`), so `doGet`/`doPost` just *throw* `UserFacingException` — no local try/catch needed.
+`BaseServlet` overrides `service()` to wrap `super.service()` in a try/catch for `UserFacingException` → `ErrorHelper.showError`. Application servlets extend it, so `doGet`/`doPost` just *throw* `UserFacingException` — no local try/catch needed.
 
-`ProtectedServlet extends BaseServlet` adds the session check: redirects to `/` if `SessionHelper.isLoggedIn(req)` is false, otherwise delegates to `super.service()` (so the `UserFacingException` wrapper still applies). Use this for any new authenticated page; do not re-write the session check inline.
+`ProtectedServlet extends BaseServlet` adds a session check (redirect to `/` if not logged in). It is **currently unused** — page auth now lives in the `requireLogin` tag — but kept for any future authenticated servlet endpoint.
 
 ### `SessionHelper`
 

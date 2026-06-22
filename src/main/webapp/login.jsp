@@ -1,16 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="auth" tagdir="/WEB-INF/tags" %>
+<auth:redirectIfLoggedIn/>
 
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Willkommen!</title>
+    <title>Login</title>
 </head>
 <body>
-<h1>Willkommen!</h1>
-<p>Erstelle den ersten Account, um loszulegen.</p>
+<h1>Login</h1>
 
-<form method="post" action="${pageContext.request.contextPath}/onboarding" accept-charset="UTF-8">
+<form method="post" action="${pageContext.request.contextPath}/login" accept-charset="UTF-8">
     <div>
         <label for="username">Username</label><br>
         <input type="text" id="username" name="username" required autofocus>
@@ -20,11 +21,7 @@
         <input type="password" id="password" name="password" required>
     </div>
     <div>
-        <label for="passwordRepeat">Passwort wiederholen</label><br>
-        <input type="password" id="passwordRepeat" name="passwordRepeat" required>
-    </div>
-    <div>
-        <button type="submit">Loslegen</button>
+        <button type="submit">Anmelden</button>
     </div>
 </form>
 </body>
