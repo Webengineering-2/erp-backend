@@ -79,6 +79,9 @@ dependencies {
     testImplementation("org.hibernate.orm:hibernate-core:${hibernateVersion}")
     testImplementation('org.mockito:mockito-core:5.14.2')
     testImplementation('org.mockito:mockito-junit-jupiter:5.14.2')
+    testImplementation('jakarta.servlet:jakarta.servlet-api:6.0.0')
+    testImplementation('jakarta.ws.rs:jakarta.ws.rs-api:3.1.0')
+    testImplementation('org.glassfish.jersey.core:jersey-common:3.1.8')
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
