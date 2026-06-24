@@ -7,6 +7,7 @@ import de.dhbw.erpbackend.domain.Product;
 import jakarta.data.repository.CrudRepository;
 import jakarta.data.repository.Find;
 import jakarta.data.repository.Insert;
+import jakarta.data.repository.OrderBy;
 import jakarta.data.repository.Repository;
 import jakarta.data.repository.Update;
 
@@ -23,6 +24,10 @@ public interface ItemRepository extends CrudRepository<Item, Long> {
 
     @Find
     List<Item> findByStatus(ItemStatus status);
+
+    @Find
+    @OrderBy(value = "updated", descending = true)
+    List<Item> findByStatusOrderByUpdatedDesc(ItemStatus status);
 
     // Explicit INSERT / UPDATE instead of the inherited save()
     // Avoid Bug with H2's MERGE

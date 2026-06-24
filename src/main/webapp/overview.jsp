@@ -25,10 +25,10 @@
 	<a href="${pageContext.request.contextPath}/create/products.jsp">
 		<button	id="createBtn">Anlegen<img src="assets/create-dashboard.svg" alt="Create"/></button>
 	</a>
-	<a href="${pageContext.request.contextPath}/stock">
+	<a href="${pageContext.request.contextPath}/stock.jsp">
 		<button	id="stockBtn">Bestände<img src="assets/magnifier.svg" alt="Stock"/></button>
 	</a>
-	<a href="${pageContext.request.contextPath}/sold">
+	<a href="${pageContext.request.contextPath}/sold.jsp">
 		<button	id="soldBtn">Verkäufe<img src="assets/money-stack.svg" alt="Sold"/></button>
 	</a>
 </body>
