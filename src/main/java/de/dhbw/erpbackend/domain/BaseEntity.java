@@ -4,10 +4,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -20,19 +20,9 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CreationTimestamp
     private Instant created;
 
+    @UpdateTimestamp
     private Instant updated;
-
-    @PrePersist
-    void onCreate() {
-        Instant now = Instant.now();
-        this.created = now;
-        this.updated = now;
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        this.updated = Instant.now();
-    }
 }

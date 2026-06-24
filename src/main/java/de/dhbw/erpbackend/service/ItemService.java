@@ -13,7 +13,11 @@ import jakarta.inject.Named;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Named
 @ApplicationScoped
@@ -28,6 +32,19 @@ public class ItemService {
 
     public List<Item> getStockItems() {
         return itemRepository.findByStatus(ItemStatus.STOCK);
+    }
+
+    public List<Item> getSoldItems() {
+        return itemRepository.findByStatusOrderByUpdatedDesc(ItemStatus.SOLD);
+    }
+
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale.GERMANY)
+                    .withZone(ZoneId.systemDefault());
+
+    /** Formats an {@link Instant} for display in JSPs (no fmt: taglib configured). */
+    public String formatDate(Instant instant) {
+        return instant == null ? "" : DATE_FORMAT.format(instant);
     }
 
     public Item createItem(Long productId, Long locationId, int quantity, BigDecimal buyPrice) {
