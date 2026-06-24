@@ -12,6 +12,8 @@ import de.dhbw.erpbackend.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -168,6 +170,27 @@ class RepositoryIntegrationTest {
                 .setParameter("s", ItemStatus.SOLD)
                 .getResultList();
         assertEquals(1, sales.size());
+    }
+
+    @Test
+    void timestampsAreSetViaStatelessSession() {
+        // Jakarta Data repositories use a StatelessSession, which does NOT fire
+        // JPA @PrePersist/@PreUpdate. This guards that created/updated are still
+        // populated (via Hibernate's @CreationTimestamp/@UpdateTimestamp) on that path.
+        Category cat = new Category();
+        cat.setName("Stateless");
+
+        SessionFactory sf = emf.unwrap(SessionFactory.class);
+        try (StatelessSession ss = sf.openStatelessSession()) {
+            ss.getTransaction().begin();
+            ss.insert(cat);
+            ss.getTransaction().commit();
+        }
+
+        assertNotNull(cat.getId());
+        Category found = em.find(Category.class, cat.getId());
+        assertNotNull(found.getCreated(), "created must be set on stateless insert");
+        assertNotNull(found.getUpdated(), "updated must be set on stateless insert");
     }
 
     @Test

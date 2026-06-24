@@ -59,6 +59,18 @@ class ItemServiceTest {
     }
 
     @Test
+    void getSoldItemsReturnsRepositoryResult() {
+        Item i = stockItem(1L, 5);
+        i.setStatus(ItemStatus.SOLD);
+        when(itemRepository.findByStatusOrderByUpdatedDesc(ItemStatus.SOLD)).thenReturn(List.of(i));
+
+        List<Item> result = service.getSoldItems();
+
+        assertEquals(1, result.size());
+        assertSame(i, result.get(0));
+    }
+
+    @Test
     void createItemBuildsStockItem() {
         Product p = new Product(); p.setId(7L);
         Location l = new Location(); l.setId(3L);
