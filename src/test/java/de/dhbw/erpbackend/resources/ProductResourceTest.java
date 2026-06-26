@@ -1,8 +1,12 @@
 package de.dhbw.erpbackend.resources;
 
 import de.dhbw.erpbackend.domain.Category;
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.Product;
 import de.dhbw.erpbackend.service.CreationService;
+import de.dhbw.erpbackend.service.LogService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +20,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,7 +29,15 @@ import static org.mockito.Mockito.when;
 class ProductResourceTest {
 
     @Mock CreationService creationService;
+    @Mock LogService logService;
+    @Mock HttpServletRequest request;
+    @Mock HttpSession session;
     @InjectMocks ProductResource resource;
+
+    private void loggedInAsAlice() {
+        when(request.getSession(false)).thenReturn(session);
+        when(session.getAttribute("username")).thenReturn("alice");
+    }
 
     @Test
     void getProductsDelegates() {
@@ -40,10 +54,13 @@ class ProductResourceTest {
     }
 
     @Test
-    void createSavesAndReturnsOk() {
+    void createSavesLogsAndReturnsOk() {
+        loggedInAsAlice();
         Product p = new Product();
+        p.setName("Cola");
         Response resp = resource.create(p);
         verify(creationService).saveProduct(p);
+        verify(logService).log(eq("alice"), eq(LogType.PRODUCT_CREATED), anyString());
         assertEquals(200, resp.getStatus());
         assertSame(p, resp.getEntity());
     }
@@ -57,6 +74,7 @@ class ProductResourceTest {
 
     @Test
     void updateCopiesFieldsResolvesCategoryAndSaves() {
+        loggedInAsAlice();
         Product existing = new Product();
         existing.setId(1L);
         when(creationService.getProductById(1L)).thenReturn(existing);
@@ -81,14 +99,17 @@ class ProductResourceTest {
         assertEquals("New name", saved.getName());
         assertEquals(new BigDecimal("9.9900"), saved.getUnitPrice());
         assertSame(resolvedCategory, saved.getCategory(), "category must be re-resolved from the DB");
+        verify(logService).log(eq("alice"), eq(LogType.PRODUCT_UPDATED), anyString());
         assertEquals(200, resp.getStatus());
         assertSame(existing, resp.getEntity());
     }
 
     @Test
-    void deleteDelegatesAndReturnsNoContent() {
+    void deleteDelegatesLogsAndReturnsNoContent() {
+        loggedInAsAlice();
         Response resp = resource.delete(3L);
         verify(creationService).deleteProduct(3L);
+        verify(logService).log(eq("alice"), eq(LogType.PRODUCT_DELETED), anyString());
         assertEquals(204, resp.getStatus());
     }
 }

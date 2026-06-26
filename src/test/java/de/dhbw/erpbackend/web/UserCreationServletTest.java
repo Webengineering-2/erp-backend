@@ -1,6 +1,9 @@
 package de.dhbw.erpbackend.web;
 
+import de.dhbw.erpbackend.domain.LogType;
+import de.dhbw.erpbackend.domain.User;
 import de.dhbw.erpbackend.service.OnboardingService;
+import de.dhbw.erpbackend.service.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -21,6 +26,7 @@ class UserCreationServletTest {
     @Mock HttpServletResponse resp;
     @Mock HttpSession session;
     @Mock OnboardingService onboardingService;
+    @Mock LogService logService;
 
     UserCreationServlet servlet;
 
@@ -28,6 +34,7 @@ class UserCreationServletTest {
     void setUp() {
         servlet = new UserCreationServlet();
         servlet.onboardingService = onboardingService;
+        servlet.logService = logService;
     }
 
     @Test
@@ -38,19 +45,26 @@ class UserCreationServletTest {
         servlet.service(req, resp);
 
         verify(resp).sendRedirect("/");
-        verifyNoInteractions(onboardingService);
+        verifyNoInteractions(onboardingService, logService);
     }
 
     @Test
-    void authenticatedPostCreatesUserAndRedirectsToOverview() throws Exception {
+    void authenticatedPostCreatesUserLogsAndRedirectsToOverview() throws Exception {
         when(req.getContextPath()).thenReturn("");
         when(req.getParameter("username")).thenReturn("newuser");
         when(req.getParameter("password")).thenReturn("pw");
         when(req.getParameter("passwordRepeat")).thenReturn("pw");
+        User created = new User();
+        created.setUsername("newuser");
+        when(onboardingService.register("newuser", "pw", "pw")).thenReturn(created);
+        // Acting admin resolved from the session.
+        when(req.getSession(false)).thenReturn(session);
+        when(session.getAttribute("username")).thenReturn("admin");
 
         servlet.doPost(req, resp);
 
         verify(onboardingService).register("newuser", "pw", "pw");
+        verify(logService).log(eq("admin"), eq(LogType.USER_CREATED), anyString());
         verify(resp).sendRedirect("/overview.jsp");
     }
 }

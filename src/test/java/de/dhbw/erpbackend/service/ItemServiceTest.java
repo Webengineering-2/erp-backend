@@ -98,8 +98,9 @@ class ItemServiceTest {
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(customerRepository.findById(9L)).thenReturn(Optional.of(buyer));
 
-        service.sell(1L, 200, new BigDecimal("0.26"), 9L);
+        ItemStatus result = service.sell(1L, 200, new BigDecimal("0.26"), 9L);
 
+        assertEquals(ItemStatus.SOLD, result);
         assertEquals(ItemStatus.SOLD, item.getStatus());
         assertSame(buyer, item.getSoldTo());
         assertEquals(new BigDecimal("0.26"), item.getSellUnitPrice());
@@ -115,8 +116,9 @@ class ItemServiceTest {
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(customerRepository.findById(9L)).thenReturn(Optional.of(buyer));
 
-        service.sell(1L, 50, new BigDecimal("0.26"), 9L);
+        ItemStatus result = service.sell(1L, 50, new BigDecimal("0.26"), 9L);
 
+        assertEquals(ItemStatus.SOLD, result);
         assertEquals(150, item.getQuantity());        // original keeps remainder
         assertEquals(ItemStatus.STOCK, item.getStatus());
         verify(itemRepository).update(item);           // original updated in place
@@ -139,8 +141,9 @@ class ItemServiceTest {
         Item item = stockItem(1L, 10);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
-        service.sell(1L, 10, BigDecimal.ZERO, null);
+        ItemStatus result = service.sell(1L, 10, BigDecimal.ZERO, null);
 
+        assertEquals(ItemStatus.WRITTEN_OFF, result);
         assertEquals(ItemStatus.WRITTEN_OFF, item.getStatus());
         assertNull(item.getSoldTo());
     }

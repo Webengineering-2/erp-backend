@@ -9,6 +9,7 @@ import de.dhbw.erpbackend.domain.Log;
 import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.Product;
 import de.dhbw.erpbackend.domain.User;
+import jakarta.data.page.PageRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -422,5 +423,48 @@ class RepositoryIntegrationTest {
         assertFalse(afterUpdate.getUpdated().equals(Instant.EPOCH),
                 "updated must be refreshed by the generator, not kept at the forced value");
         assertTrue(afterUpdate.getUpdated().isAfter(Instant.EPOCH));
+    }
+
+    private User seedUser(String username) {
+        User u = new User();
+        u.setUsername(username);
+        u.setPasswordHash("hash");
+        persist(u);
+        return u;
+    }
+
+    private void seedLog(User user, LogType type, String description) {
+        Log l = new Log();
+        l.setUser(user);
+        l.setType(type);
+        l.setDescription(description);
+        persist(l);
+    }
+
+    @Test
+    void logSearchMatchesDescriptionAndUsernameCaseInsensitively() {
+        User alice = seedUser("alice");
+        User bob = seedUser("bob");
+        seedLog(alice, LogType.USER_LOGIN, "Benutzer 'alice' hat sich angemeldet.");
+        seedLog(alice, LogType.PRODUCT_CREATED, "Produkt 'Cola' wurde erstellt.");
+        seedLog(bob, LogType.USER_LOGIN, "Benutzer 'bob' hat sich angemeldet.");
+
+        long total = inStateless(ss -> new LogRepository_(ss).countAll());
+        assertEquals(3L, total);
+
+        // Case-insensitive substring over the description.
+        int colaRows = inStateless(ss ->
+                new LogRepository_(ss).search("COLA", PageRequest.ofSize(50)).content().size());
+        assertEquals(1, colaRows);
+        long colaCount = inStateless(ss -> new LogRepository_(ss).countSearch("COLA"));
+        assertEquals(1L, colaCount);
+
+        // Match over the actor's username.
+        long bobCount = inStateless(ss -> new LogRepository_(ss).countSearch("bob"));
+        assertEquals(1L, bobCount);
+
+        // Substring shared by both login descriptions.
+        long loginCount = inStateless(ss -> new LogRepository_(ss).countSearch("angemeldet"));
+        assertEquals(2L, loginCount);
     }
 }

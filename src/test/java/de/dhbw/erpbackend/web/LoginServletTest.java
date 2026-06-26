@@ -1,7 +1,10 @@
 package de.dhbw.erpbackend.web;
 
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.User;
 import de.dhbw.erpbackend.service.LoginService;
+import de.dhbw.erpbackend.service.LogService;
+import de.dhbw.erpbackend.service.UserFacingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -23,6 +28,7 @@ class LoginServletTest {
     @Mock HttpServletResponse resp;
     @Mock HttpSession session;
     @Mock LoginService loginService;
+    @Mock LogService logService;
 
     LoginServlet servlet;
 
@@ -30,6 +36,7 @@ class LoginServletTest {
     void setUp() {
         servlet = new LoginServlet();
         servlet.loginService = loginService;
+        servlet.logService = logService;
     }
 
     @Test
@@ -58,6 +65,7 @@ class LoginServletTest {
         servlet.doPost(req, resp);
 
         verify(session).setAttribute("username", "bob");
+        verify(logService).log(eq("bob"), eq(LogType.USER_LOGIN), anyString());
         verify(resp).sendRedirect("/overview.jsp");
     }
 
@@ -67,13 +75,11 @@ class LoginServletTest {
         when(req.getParameter("username")).thenReturn("bob");
         when(req.getParameter("password")).thenReturn("wrong");
         when(loginService.authenticate("bob", "wrong"))
-                .thenThrow(new de.dhbw.erpbackend.service.UserFacingException("Benutzername oder Passwort ist falsch."));
+                .thenThrow(new UserFacingException("Benutzername oder Passwort ist falsch."));
 
-        // BaseServlet.service() (not exercised here) maps this to the error page;
-        // doPost itself must let it bubble up.
-        org.junit.jupiter.api.Assertions.assertThrows(
-                de.dhbw.erpbackend.service.UserFacingException.class,
+        assertThrows(
+                UserFacingException.class,
                 () -> servlet.doPost(req, resp));
-        verify(session, never()).setAttribute(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any());
+        verify(session, never()).setAttribute(anyString(), any());
     }
 }
