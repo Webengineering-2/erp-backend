@@ -1,9 +1,14 @@
 package de.dhbw.erpbackend.resources;
 
 import de.dhbw.erpbackend.domain.Category;
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.service.CreationService;
+import de.dhbw.erpbackend.service.LogService;
+import de.dhbw.erpbackend.web.SessionHelper;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
@@ -14,6 +19,12 @@ import java.util.List;
 public class CategoryResource {
     @Inject
     private CreationService creationService;
+
+    @Inject
+    private LogService logService;
+
+    @Context
+    private HttpServletRequest request;
 
     @GET
     @Path("/")
@@ -30,6 +41,8 @@ public class CategoryResource {
     @POST
     public Response create(Category category) {
         creationService.saveCategory(category);
+        logService.log(SessionHelper.currentUsername(request), LogType.CATEGORY_CREATED,
+                "Kategorie '" + category.getName() + "' wurde erstellt.");
         return Response.ok(category).build();
     }
 
@@ -38,6 +51,8 @@ public class CategoryResource {
     public Response update(@PathParam("id") Long id, Category category) {
         category.setId(id);
         creationService.saveCategory(category);
+        logService.log(SessionHelper.currentUsername(request), LogType.CATEGORY_UPDATED,
+                "Kategorie '" + category.getName() + "' wurde bearbeitet.");
         return Response.ok(category).build();
     }
 
@@ -45,6 +60,8 @@ public class CategoryResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         creationService.deleteCategory(id);
+        logService.log(SessionHelper.currentUsername(request), LogType.CATEGORY_DELETED,
+                "Kategorie #" + id + " wurde gelöscht.");
         return Response.noContent().build();
     }
 }

@@ -17,7 +17,7 @@
         <div id="profile-popover" popover>
             <ul>
                 <li><a href="${pageContext.request.contextPath}/createuser.jsp">Benutzer erstellen</a></li>
-                <li><a href="${pageContext.request.contextPath}/logs">Logs einsehen</a></li>
+                <li><a href="${pageContext.request.contextPath}/logs.jsp">Logs einsehen</a></li>
                 <li><a href="${pageContext.request.contextPath}/logout">Abmelden</a></li>
             </ul>
         </div>

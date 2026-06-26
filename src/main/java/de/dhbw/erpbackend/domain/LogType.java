@@ -2,6 +2,7 @@ package de.dhbw.erpbackend.domain;
 
 public enum LogType {
     USER_REGISTERED,
+    USER_CREATED,
     USER_LOGIN,
     USER_LOGOUT,
     PRODUCT_CREATED,
@@ -18,7 +19,6 @@ public enum LogType {
     CUSTOMER_DELETED,
     ITEM_CREATED,
     ITEM_SOLD,
-    ITEM_SPLIT,
     ITEM_WRITTEN_OFF,
     OTHER
 }
