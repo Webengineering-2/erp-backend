@@ -1,10 +1,15 @@
 package de.dhbw.erpbackend.resources;
 
 import de.dhbw.erpbackend.domain.Category;
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.Product;
 import de.dhbw.erpbackend.service.CreationService;
+import de.dhbw.erpbackend.service.LogService;
+import de.dhbw.erpbackend.web.SessionHelper;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
@@ -16,6 +21,12 @@ public class ProductResource {
 
     @Inject
     private CreationService creationService;
+
+    @Inject
+    private LogService logService;
+
+    @Context
+    private HttpServletRequest request;
 
     @GET
     @Path("/")
@@ -32,6 +43,8 @@ public class ProductResource {
     @POST
     public Response create(Product product) {
         creationService.saveProduct(product);
+        logService.log(SessionHelper.currentUsername(request), LogType.PRODUCT_CREATED,
+                "Produkt '" + product.getName() + "' wurde erstellt.");
         return Response.ok(product).build();
     }
 
@@ -48,6 +61,8 @@ public class ProductResource {
         savable.setCategory(saveCategory);
 
         creationService.saveProduct(savable);
+        logService.log(SessionHelper.currentUsername(request), LogType.PRODUCT_UPDATED,
+                "Produkt '" + savable.getName() + "' wurde bearbeitet.");
         return Response.ok(savable).build();
     }
 
@@ -55,6 +70,8 @@ public class ProductResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         creationService.deleteProduct(id);
+        logService.log(SessionHelper.currentUsername(request), LogType.PRODUCT_DELETED,
+                "Produkt #" + id + " wurde gelöscht.");
         return Response.noContent().build();
     }
 }

@@ -1,7 +1,9 @@
 package de.dhbw.erpbackend.web;
 
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.User;
 import de.dhbw.erpbackend.service.OnboardingService;
+import de.dhbw.erpbackend.service.LogService;
 import jakarta.inject.Inject;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +17,9 @@ public class OnboardingServlet extends BaseServlet {
     @Inject
     OnboardingService onboardingService;
 
+    @Inject
+    LogService logService;
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (SessionHelper.isLoggedIn(req)) {
@@ -27,6 +32,8 @@ public class OnboardingServlet extends BaseServlet {
 
         User user = onboardingService.register(username, password, passwordRepeat);
         SessionHelper.login(req, user.getUsername());
+        logService.log(user.getUsername(), LogType.USER_REGISTERED,
+                "Erster Benutzer '" + user.getUsername() + "' wurde registriert.");
         resp.sendRedirect(req.getContextPath() + "/overview.jsp");
     }
 }

@@ -1,7 +1,9 @@
 package de.dhbw.erpbackend.web;
 
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.User;
 import de.dhbw.erpbackend.service.OnboardingService;
+import de.dhbw.erpbackend.service.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -22,6 +26,7 @@ class OnboardingServletTest {
     @Mock HttpServletResponse resp;
     @Mock HttpSession session;
     @Mock OnboardingService onboardingService;
+    @Mock LogService logService;
 
     OnboardingServlet servlet;
 
@@ -29,6 +34,7 @@ class OnboardingServletTest {
     void setUp() {
         servlet = new OnboardingServlet();
         servlet.onboardingService = onboardingService;
+        servlet.logService = logService;
     }
 
     @Test
@@ -58,6 +64,7 @@ class OnboardingServletTest {
         servlet.doPost(req, resp);
 
         verify(session).setAttribute("username", "admin");
+        verify(logService).log(eq("admin"), eq(LogType.USER_REGISTERED), anyString());
         verify(resp).sendRedirect("/overview.jsp");
     }
 }

@@ -59,7 +59,7 @@ public class ItemService {
         return itemRepository.insert(item);
     }
 
-    public void sell(Long itemId, int quantity, BigDecimal sellUnitPrice, Long customerId) {
+    public ItemStatus sell(Long itemId, int quantity, BigDecimal sellUnitPrice, Long customerId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new UserFacingException("Artikel nicht gefunden."));
 
@@ -97,5 +97,6 @@ public class ItemService {
             sold.setSellUnitPrice(sellUnitPrice);
             itemRepository.insert(sold);
         }
+        return newStatus;
     }
 }

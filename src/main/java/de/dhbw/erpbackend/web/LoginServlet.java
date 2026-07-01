@@ -1,7 +1,9 @@
 package de.dhbw.erpbackend.web;
 
+import de.dhbw.erpbackend.domain.LogType;
 import de.dhbw.erpbackend.domain.User;
 import de.dhbw.erpbackend.service.LoginService;
+import de.dhbw.erpbackend.service.LogService;
 import jakarta.inject.Inject;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +17,9 @@ public class LoginServlet extends BaseServlet {
     @Inject
     LoginService loginService;
 
+    @Inject
+    LogService logService;
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if (SessionHelper.isLoggedIn(req)) {
@@ -26,6 +31,8 @@ public class LoginServlet extends BaseServlet {
 
         User user = loginService.authenticate(username, password);
         SessionHelper.login(req, user.getUsername());
+        logService.log(user.getUsername(), LogType.USER_LOGIN,
+                "Benutzer '" + user.getUsername() + "' hat sich angemeldet.");
         resp.sendRedirect(req.getContextPath() + "/overview.jsp");
     }
 }
